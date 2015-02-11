@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Share to Mopidy</string>
+    <string name="action_configuration">Configuration</string>
+    <string name="action_about">About</string>
+
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="connecting">Conecting&#8230;</string>
+
+    <string name="error_connecting_title">Error connecting to mopidy</string>
+    <string name="error_connecting_text">Check your configuration</string>
+
+    <string name="no_track">No Track</string>
+    <string name="open_configuration">Open configuration</string>
+
+    <array name="configuration_pages">
+        <item>Welcome</item>
+        <item>Name</item>
+        <item>Mopidy config</item>
+        <item>IP</item>
+        <item>Test</item>
+    </array>
+
+    <string name="configuration_welcome_message">Welcome!\n\nBefore using the app you need to configure mopidy and this app.\n\nThis tutorial will help you to get started.\n\nYou can swipe to move between the next or previous step.</string>
+    <string name="configuration_mopidy_message">Change your mopidy config (~/.config/mopidy/mopidy.conf) and set:\n\n[http]\nenabled = true\nhostname = 0.0.0.0\nport = [portnumber]\n\nYou can choose the [portnumber] you want (default is 6680) but you must write it here:</string>
+    <string name="configuration_name_message">Set a name to this server. You can set any name you want:</string>
+    <string name="configuration_ip_message">Find the IP address where mopidy is running (ifconfig can be helpull) and write it here:</string>
+
+
+    <string name="defaultName">My Mopidy Server</string>
+    <string name="defaultIP">192.168.1.2</string>
+    <string name="defaultPort">6680</string>
+    <string name="add_server">+ Add new server</string>
+
+    <string name="port">Port:</string>
+    <string name="name">Name:</string>
+    <string name="ip">IP:</string>
+    <string name="next">Next</string>
+    <string name="single_number">1</string>
+    <string name="consume_text">C</string>
+
+    <string name="try_again_button">Try again</string>
+    <string name="finish_button">Finish</string>
+    <string name="check_config">Check configuration</string>
+    <string name="configuration_test_ok">Congratulations!\n\nThe app has connected to mopidy successfully.\n\nYou can now use the app.\n\nRemenber you can use the share button on spotify and select email, this app will show as an option.\n\nYou can also use Youtube share button</string>
+    <string name="configuration_error">The test failed :(\n There was a problem connecting to mopidy:</string>
+
+    <string name="about">About</string>
+    <string name="about_message">This app uses the following libraries:\n\nhttps://github.com/koush/AndroidAsync\n\nhttps://github.com/nostra13/Android-Universal-Image-Loader\n\nAnd of course this app would not be here without https://www.mopidy.com</string>
+
+
+</resources>

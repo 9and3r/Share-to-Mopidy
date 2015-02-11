@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:elevation="8dp"
+        android:layout_height="wrap_content"
+        android:padding = "10dp"
+        android:layout_margin = "10dp"
+        card_view:cardCornerRadius="10dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin = "10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/defaultName"
+            android:id="@+id/nameText"
+            android:layout_toLeftOf="@+id/settings_button"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/defaultIP"
+            android:textColor="#000000"
+            android:id="@+id/ipText"
+            android:layout_below="@+id/nameText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/settings_button"
+            android:layout_toStartOf="@+id/settings_button" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/defaultPort"
+            android:textColor="#000000"
+            android:id="@+id/portText"
+            android:layout_below="@+id/ipText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/settings_button"
+            android:layout_toStartOf="@+id/settings_button" />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:id="@+id/settings_button"
+                android:src="@drawable/ic_action_settings"
+                android:layout_alignParentRight="true" />
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:id="@+id/deleteButton"
+                android:src="@drawable/ic_action_discard"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/settings_button" />
+        </RelativeLayout>
+
+       </android.support.v7.widget.CardView>
+
+
+</LinearLayout>
