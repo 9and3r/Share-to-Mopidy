@@ -29,8 +29,10 @@ import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfig;
 import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfigManager;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPalleteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.ConnectedActivity;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.NotConnectedActivity;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.StartActivity;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.configuration.tutorial.ConfigurationActivity;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.MainActivity;
 
 public class MopidyService extends Service implements Observer {
 
@@ -192,7 +194,7 @@ public class MopidyService extends Service implements Observer {
     }
 
     private Notification loadingNotification(){
-        PendingIntent intent = PendingIntent.getActivity(this, 4, new Intent(this, MainActivity.class), 0);
+        PendingIntent intent = PendingIntent.getActivity(this, 4, new Intent(this, NotConnectedActivity.class), 0);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_stat_notification)
@@ -293,7 +295,7 @@ public class MopidyService extends Service implements Observer {
     private void changeNotification(){
 
         // Main intent
-        Intent intentMain = new Intent(this, MainActivity.class);
+        Intent intentMain = new Intent(this, StartActivity.class);
         intentMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingMain = PendingIntent.getActivity(this,0,intentMain,0);
 

@@ -8,15 +8,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
 
 
 public class TrackPagerAdapter extends FragmentStatePagerAdapter {
 
 
+    private MopidyTrack[] tracks;
+
 
 
     public TrackPagerAdapter(FragmentManager fm) {
         super(fm);
+        tracks = MopidyStatus.get().getTracklist();
     }
 
     @Override
@@ -30,7 +34,7 @@ public class TrackPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return MopidyStatus.get().getTracklist().length;
+        return tracks.length;
     }
 
 
@@ -50,5 +54,9 @@ public class TrackPagerAdapter extends FragmentStatePagerAdapter {
 
     }
 
-
+    @Override
+    public void notifyDataSetChanged() {
+        tracks = MopidyStatus.get().getTracklist();
+        super.notifyDataSetChanged();
+    }
 }

@@ -5,8 +5,10 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 
-public class MopidyTrack {
+
+public class MopidyTrack implements Serializable{
 
 
     private String tl_track;

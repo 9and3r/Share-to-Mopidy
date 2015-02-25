@@ -26,5 +26,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.+'
     compile 'com.android.support:palette-v7:21.0.0'
     compile 'com.koushikdutta.async:androidasync:2.+'
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+    compile 'com.sothree.slidinguppanel:library:3.0.0'
 }

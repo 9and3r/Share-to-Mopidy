@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.ImageButton;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 
 import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfigManager;
 import mopidy.to.share.and3r.sharetomopidy.preferences.PreferencesManager;
@@ -26,13 +24,7 @@ public class ApplicationShareToMopidy extends Application {
 
     public static void init(Context context) {
 
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .cacheOnDisk(true)
-                .cacheInMemory(true)
-                .build();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).defaultDisplayImageOptions(options).build();
-        // Initialize ImageLoader with configuration.
-        ImageLoader.getInstance().init(config);
+
 
         MopidyServerConfigManager.get().init(context);
         if(PreferencesManager.get().isFirsTime(context)){

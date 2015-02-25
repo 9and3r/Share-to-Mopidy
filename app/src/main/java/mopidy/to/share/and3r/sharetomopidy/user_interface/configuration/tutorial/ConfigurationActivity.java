@@ -9,7 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
-import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.MainActivity;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.NotConnectedActivity;
 import mopidy.to.share.and3r.sharetomopidy.MopidyService;
 import mopidy.to.share.and3r.sharetomopidy.R;
 
@@ -54,7 +54,7 @@ public class ConfigurationActivity extends ActionBarActivity implements ViewPage
     }
 
     public void finishButton(View v){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, NotConnectedActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

@@ -6,12 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 
-public class MopidyAlbum {
+
+public class MopidyAlbum implements Serializable{
 
     private String albumName;
     private MopidyArtist[] artists;
-    private Palette palette;
+    private transient Palette palette;
 
     public MopidyAlbum(JSONObject object){
         try{
@@ -51,6 +53,7 @@ public class MopidyAlbum {
         return getAlbumName() + "#" + getArtistsString();
     }
 
+
     public Palette getPalette() {
         return palette;
     }
@@ -76,5 +79,13 @@ public class MopidyAlbum {
         }else{
             return false;
         }
+    }
+
+    public String getAlbumArtFileName(){
+        String fileName = albumName.replace("[^\\d]", "-");
+        fileName = fileName.replace("\\W", "-");
+        fileName = fileName.replace(" ", "_");
+        fileName = fileName.replace("/", "-");
+        return fileName;
     }
 }

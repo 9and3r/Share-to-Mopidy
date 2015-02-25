@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/connect"
-        android:id="@+id/button"
-        android:onClick="connect" />
 
-    <Button
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/select_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/open_configuration"
-        android:id="@+id/button4"
-        android:onClick="open_config" />
+        android:layout_height="match_parent">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="mopidy.to.share.and3r.sharetomopidy.user_interface.configuration.select.ServerSelectFragment"
+            android:id="@+id/fragment"
+            android:layout_gravity="center_horizontal"
+            tools:layout="@layout/select_fragment" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
 </LinearLayout>
