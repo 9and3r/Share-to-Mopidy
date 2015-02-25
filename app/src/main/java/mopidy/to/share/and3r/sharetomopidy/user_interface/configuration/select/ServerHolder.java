@@ -13,10 +13,6 @@ import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfigManager
 import mopidy.to.share.and3r.sharetomopidy.user_interface.configuration.tutorial.ConfigurationActivity;
 
 
-/**
- * Created by ander on 2/4/15.
- */
-
 public class ServerHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private TextView nameText;

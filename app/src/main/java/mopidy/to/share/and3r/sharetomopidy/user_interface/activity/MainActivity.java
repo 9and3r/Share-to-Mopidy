@@ -2,6 +2,7 @@ package mopidy.to.share.and3r.sharetomopidy.user_interface.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,39 +24,30 @@ import mopidy.to.share.and3r.sharetomopidy.MopidyService;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.TrackPagerAdapter;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.configuration.select.ServerSelectFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.configuration.tutorial.ConnectingFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.NowPlayingFragment;
 
 
 public class MainActivity extends ActionBarActivity implements Observer {
-
-    private TrackPagerAdapter adapter;
-    private ViewPager pager;
-    private ImageView playButton;
-    private View playbackControls;
-    private TextView singleButton;
-    private TextView consumeButton;
-    private ImageView repeatButton;
-    private ImageView randomButton;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setMainView();
+        setContentView(R.layout.main_activity);
+        if (findViewById(R.id.fragment_container) != null) {
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new ServerSelectFragment()).commit();
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        onConnectionStatusChanged();
         MopidyStatus.get().addObserver(this);
-        adapter.notifyDataSetChanged();
-        updateCurrentTrack();
-        updatePlayState();
-        onRepeatChanged();
-        onRandomChanged();
-        onConsumeChanged();
-        onSingleChanged();
-        updateConnectionStatus();
     }
 
     @Override
@@ -71,69 +63,8 @@ public class MainActivity extends ActionBarActivity implements Observer {
         return true;
     }
 
-    private void setMainView(){
-        setContentView(R.layout.activity_main);
-        playButton = (ImageView) findViewById(R.id.playPauseButton);
-        pager = (ViewPager) findViewById(R.id.tracks_pager);
-        playbackControls = findViewById(R.id.playback_controls);
-        singleButton = (TextView) findViewById(R.id.singleButton);
-        consumeButton = (TextView) findViewById(R.id.consumeButton);
-        repeatButton = (ImageView) findViewById(R.id.repeatButton);
-        randomButton = (ImageView) findViewById(R.id.shuffleButton);
-        adapter = new TrackPagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(adapter);
-        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (MopidyStatus.get().getConnectionStatus() == MopidyStatus.CONNECTED){
-                    if (position != MopidyStatus.get().getCurrentPos()){
-                        Intent nextIntent = new Intent(MainActivity.this, MopidyService.class);
-                        nextIntent.setAction(MopidyService.ACTION_ONE_ACTION);
-                        DefaultJSON nextJSON = new DefaultJSON();
-                        nextJSON.setMethod("core.playback.change_track");
-                        JSONObject params = new JSONObject();
-                        try {
-                            params.put("tl_track", new JSONObject(MopidyStatus.get().getTrack(position).getTl_track()));
-                            nextJSON.put("params", params);
-                            nextIntent.putExtra(MopidyService.ACTION_DATA, nextJSON.toString());
-                            startService(nextIntent);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
 
 
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        updateCurrentTrack();
-        updatePlayState();
-    }
-
-    private void updatePlayState(){
-        if (MopidyStatus.get().isPlaying()){
-            playButton.setImageResource(R.drawable.ic_action_pause);
-        }else{
-            playButton.setImageResource(R.drawable.ic_action_play);
-        }
-    }
-
-    private void updateCurrentTrack(){
-        if (pager.getCurrentItem() != MopidyStatus.get().getCurrentPos()){
-            pager.setCurrentItem(MopidyStatus.get().getCurrentPos());
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -154,111 +85,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateConnectionStatus(){
-        if (MopidyStatus.get().getConnectionStatus() == MopidyStatus.CONNECTED){
-            playbackControls.setVisibility(View.VISIBLE);
-        }else{
-            playbackControls.setVisibility(View.GONE);
-        }
-    }
 
-    public void onSingleChanged(){
-        if (MopidyStatus.get().isSingle()){
-            singleButton.setTextColor(getResources().getColor(R.color.accent));
-        }else{
-            singleButton.setTextColor(Color.WHITE);
-        }
-    }
-
-    public void onRepeatChanged(){
-        if (MopidyStatus.get().isRepeat()){
-            repeatButton.setImageResource(R.drawable.ic_action_repeat_active);
-        }else{
-            repeatButton.setImageResource(R.drawable.ic_action_repeat);
-        }
-    }
-
-    public void onRandomChanged(){
-        if (MopidyStatus.get().isRandom()){
-            randomButton.setImageResource(R.drawable.ic_action_shuffle_active);
-        }else{
-            randomButton.setImageResource(R.drawable.ic_action_shuffle);
-        }
-    }
-
-
-    public void onConsumeChanged(){
-        if (MopidyStatus.get().isConsume()){
-            consumeButton.setTextColor(getResources().getColor(R.color.accent));
-        }else{
-            consumeButton.setTextColor(Color.WHITE);
-        }
-    }
-
-    public void changeRandom(View v){
-        Intent intent = new Intent(this, MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_random");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isRandom());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void changeRepeat(View v){
-        Intent intent = new Intent(this, MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_repeat");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isRepeat());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void changeSingle(View v){
-        Intent intent = new Intent(this, MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_single");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isSingle());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void changeConsume(View v){
-        Intent intent = new Intent(this, MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_consume");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isConsume());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void disconnect(){
         Intent intent = new Intent(this, MopidyService.class);
@@ -266,54 +93,34 @@ public class MainActivity extends ActionBarActivity implements Observer {
         startService(intent);
     }
 
-    public void playOrPause(View v){
-        PlaybackControlManager.playOrPause(getApplicationContext());
-    }
-
-    public void next(View v){
-        PlaybackControlManager.next(getApplicationContext());
-    }
-
-    public void previous(View v){
-        PlaybackControlManager.previous(getApplicationContext());
-    }
-
-    @Override
-    public void update(Observable observable, Object data) {
-        final int event = (int) data;
+    private void onConnectionStatusChanged(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                switch (event) {
-                    case MopidyStatus.EVENT_CURRENT_TRACK_CHANGED:
-                        adapter.notifyDataSetChanged();
-                        updateCurrentTrack();
+                switch (MopidyStatus.get().getConnectionStatus()){
+                    case MopidyStatus.CONNECTED:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NowPlayingFragment()).commit();
                         break;
-                    case MopidyStatus.EVENT_PLAYBACK_STATE_CHANGED:
-                        updatePlayState();
+                    case MopidyStatus.NOT_CONNECTED:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ServerSelectFragment()).commit();
                         break;
-                    case MopidyStatus.CONNECTION_STATE_CHANGED:
-                        adapter.notifyDataSetChanged();
-                        updateConnectionStatus();
-                        break;
-                    case MopidyStatus.EVENT_TRACKLIST_CHANGED:
-                        adapter.notifyDataSetChanged();
-                        break;
-                    case MopidyStatus.EVENT_SINGLE_OPTION_CHANGED:
-                        onSingleChanged();
-                        break;
-                    case MopidyStatus.EVENT_CONSUME_OPTION_CHANGED:
-                        onConsumeChanged();
-                        break;
-                    case MopidyStatus.EVENT_RANDOM_OPTION_CHANGED:
-                        onRandomChanged();
-                        break;
-                    case MopidyStatus.EVENT_REPEAT_OPTION_CHANGED:
-                        onRepeatChanged();
+                    case MopidyStatus.CONNECTING:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ConnectingFragment()).commit();
                         break;
                 }
             }
         });
+    }
+
+
+
+    @Override
+    public void update(Observable observable, Object data) {
+
+        if (((int) data) == MopidyStatus.CONNECTION_STATE_CHANGED){
+            onConnectionStatusChanged();
+
+        }
 
     }
 

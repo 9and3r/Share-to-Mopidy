@@ -13,7 +13,7 @@
 
     </android.support.v4.view.ViewPager>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -22,13 +22,18 @@
         android:id="@+id/playback_controls">
 
 
-
-
-
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar"
+            android:layout_toRightOf="@+id/currenSeekPositionTextView"
+            android:layout_toLeftOf="@+id/trackLenghtTextView" />
 
         <TableRow
+            android:id="@+id/playback_controls_table"
             android:layout_width="match_parent"
-            android:layout_height="48dp">
+            android:layout_height="48dp"
+            android:layout_below="@+id/seekBar">
 
 
 
@@ -37,8 +42,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/repeatButton"
                     android:src="@drawable/ic_action_repeat"
-                    android:layout_weight="1"
-                    android:onClick="changeRepeat"/>
+                    android:layout_weight="1"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -48,8 +52,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/single_number"
                     android:id="@+id/singleButton"
-                    android:layout_weight="1"
-                    android:onClick="changeSingle" />
+                    android:layout_weight="1"/>
 
 
 
@@ -59,24 +62,21 @@
                 android:layout_height="match_parent"
                 android:id="@+id/previousButton"
                 android:layout_weight="1.3"
-                android:src="@drawable/ic_action_previous"
-                android:onClick="previous"/>
+                android:src="@drawable/ic_action_previous"/>
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/playPauseButton"
                 android:src="@drawable/ic_action_play"
-                android:layout_weight="1.7"
-                android:onClick="playOrPause"/>
+                android:layout_weight="1.7"/>
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/nextButton"
                 android:src="@drawable/ic_action_next"
-                android:layout_weight="1.3"
-                android:onClick="next"/>
+                android:layout_weight="1.3"/>
 
 
                 <ImageView
@@ -84,8 +84,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/shuffleButton"
                     android:src="@drawable/ic_action_shuffle"
-                    android:layout_weight="1"
-                    android:onClick="changeRandom"/>
+                    android:layout_weight="1"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -95,17 +94,35 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/consume_text"
                     android:id="@+id/consumeButton"
-                    android:layout_weight="1"
-                    android:onClick="changeConsume" />
+                    android:layout_weight="1"/>
 
 
 
 
         </TableRow>
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
+            android:gravity="center"
+            android:id="@+id/currenSeekPositionTextView"
+            android:layout_above="@+id/playback_controls_table"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/time"
+            android:id="@+id/trackLenghtTextView"
+            android:layout_above="@+id/playback_controls_table"
+            android:layout_alignRight="@+id/playback_controls_table"
+            android:layout_alignParentTop="true" />
 
+    </RelativeLayout>
 
 
 </RelativeLayout>

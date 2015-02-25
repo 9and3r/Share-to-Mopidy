@@ -1,5 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface;
 
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -42,7 +43,9 @@ public class OneTrackFragment extends Fragment implements OnImageAndPalleteReady
         artistsNames = (TextView) rootView.findViewById(R.id.artisttextView);
         albumImageView = (ImageView) rootView.findViewById(R.id.albumImageView);
         track = MopidyStatus.get().getTrack(getArguments().getInt("pos"));
-        init();
+        if (track != null){
+            init();
+        }
         return rootView;
     }
 
@@ -57,7 +60,10 @@ public class OneTrackFragment extends Fragment implements OnImageAndPalleteReady
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        imageTask.cancel(true);
+        if (imageTask != null && !imageTask.isCancelled()){
+            imageTask.cancel(true);
+        }
+
     }
 
     @Override

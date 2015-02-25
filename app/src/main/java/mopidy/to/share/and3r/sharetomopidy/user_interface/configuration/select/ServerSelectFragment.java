@@ -19,7 +19,7 @@ import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfigManager
 /**
  * Created by ander on 2/4/15.
  */
-public class SelectFragment extends Fragment implements Observer {
+public class ServerSelectFragment extends Fragment implements Observer {
 
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;

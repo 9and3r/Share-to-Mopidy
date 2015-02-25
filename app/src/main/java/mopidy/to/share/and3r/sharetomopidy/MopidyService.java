@@ -59,7 +59,7 @@ public class MopidyService extends Service implements Observer {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MopidyServerConfig config;
-        if(intent.hasExtra(CONFIG_ID)){
+        if(intent!=null && intent.hasExtra(CONFIG_ID)){
             config = MopidyServerConfigManager.get().getConfig(getApplicationContext(), intent.getIntExtra(CONFIG_ID, 0), true);
         }else{
             config = MopidyServerConfigManager.get().getCurrentServer(getApplicationContext());
@@ -147,7 +147,8 @@ public class MopidyService extends Service implements Observer {
                             .setSmallIcon(R.drawable.ic_stat_notification)
                             .setContentTitle(getString(R.string.error_connecting_title))
                             .setContentText(getString(R.string.error_connecting_text))
-                            .setContentIntent(intent);
+                            .setContentIntent(intent)
+                            .setTicker(getString(R.string.error_connecting_title));
             NotificationManager mNotificationManager =(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(NOTIFICATION_ID_ERROR, mBuilder.build());
             stopConnection();
@@ -182,7 +183,9 @@ public class MopidyService extends Service implements Observer {
                             RemoteControlClient.FLAG_KEY_MEDIA_PAUSE |
                             RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS |
                             RemoteControlClient.FLAG_KEY_MEDIA_NEXT |
-                            RemoteControlClient.FLAG_KEY_MEDIA_STOP);
+                            RemoteControlClient.FLAG_KEY_MEDIA_STOP|
+                            RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE|
+                            RemoteControlClient.FLAG_KEY_MEDIA_POSITION_UPDATE);
 
 
 
@@ -244,7 +247,6 @@ public class MopidyService extends Service implements Observer {
     }
 
     private void onBitmapLoaded(){
-
         changeNotification();
         changeMetadata();
     }
@@ -261,17 +263,28 @@ public class MopidyService extends Service implements Observer {
         editor.apply();
 
         int status = MopidyStatus.get().getConnectionStatus();
+        float speed = 0.0f;
+        int playStatus = RemoteControlClient.PLAYSTATE_ERROR;
         switch (status){
             case MopidyStatus.PLAYING:
-                mRemoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
+                playStatus = RemoteControlClient.PLAYSTATE_PLAYING;
+                speed = 1.0f;
                 break;
             case MopidyStatus.PAUSED:
-                mRemoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
+                playStatus = RemoteControlClient.PLAYSTATE_PAUSED;
+                speed = 0.0f;
                 break;
             case MopidyStatus.STOPPED:
-                mRemoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
+                playStatus = RemoteControlClient.PLAYSTATE_STOPPED;
+                speed = 0.0f;
                 break;
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            mRemoteControlClient.setPlaybackState(playStatus,MopidyStatus.get().getCurrentSeekPos(),speed);
+        }else{
+            mRemoteControlClient.setPlaybackState(playStatus);
+        }
+
 
 
     }
@@ -321,6 +334,7 @@ public class MopidyService extends Service implements Observer {
                 .setContentTitle(MopidyStatus.get().getCurrentTrackName())
                 .setContentText(MopidyStatus.get().getCurrentArtistsName())
                 .setContentInfo(MopidyStatus.get().getCurrentAlbumName())
+                .setTicker(MopidyStatus.get().getCurrentTrackName() + " " +MopidyStatus.get().getCurrentArtistsName())
                 .setContentIntent(pendingMain)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .addAction(R.drawable.ic_action_previous, null, pendingPrevious)

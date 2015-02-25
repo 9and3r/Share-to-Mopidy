@@ -1,5 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.mopidy;
 
+import android.content.Intent;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -34,10 +35,13 @@ public class MopidyStatus extends Observable{
     public static final int EVENT_PLAYBACK_STATE_CHANGED = 1;
     public static final int EVENT_CURRENT_TRACK_CHANGED = 2;
 
+
     public static final int EVENT_REPEAT_OPTION_CHANGED = 3;
     public static final int EVENT_RANDOM_OPTION_CHANGED = 4;
     public static final int EVENT_SINGLE_OPTION_CHANGED = 5;
     public static final int EVENT_CONSUME_OPTION_CHANGED = 6;
+
+    public static final int EVENT_SEEK = 7;
 
     private int connectionStatus;
 
@@ -46,6 +50,9 @@ public class MopidyStatus extends Observable{
     private boolean random;
     private boolean consume;
     private boolean single;
+
+    private long trackStartMillis;
+    private long timePosition;
 
     public int getCurrentPos() {
         return currentPos;
@@ -105,7 +112,7 @@ public class MopidyStatus extends Observable{
         }
     }
 
-    public long getCurrentTrackLenght(){
+    public int getCurrentTrackLenght(){
         if (currentPos<tracklist.length && currentPos>=0){
             return tracklist[currentPos].getLength();
         }else{
@@ -127,7 +134,13 @@ public class MopidyStatus extends Observable{
         currentPos = positionInTracklist(track);
         setChanged();
         notifyObservers(EVENT_CURRENT_TRACK_CHANGED);
+    }
 
+    public void onSeek(long newPos){
+        trackStartMillis = System.currentTimeMillis() - newPos;
+        timePosition = newPos;
+        setChanged();
+        notifyObservers(EVENT_SEEK);
     }
 
     public int positionInTracklist(Object track){
@@ -167,7 +180,6 @@ public class MopidyStatus extends Observable{
         }
         setChanged();
         notifyObservers(EVENT_TRACKLIST_CHANGED);
-
     }
 
     public int getConnectionStatus() {
@@ -187,6 +199,17 @@ public class MopidyStatus extends Observable{
 
     public void playbackStateChanged(int newStatus){
         playbackState = newStatus;
+        switch (newStatus){
+            case PLAYING:
+                trackStartMillis = System.currentTimeMillis() - timePosition;
+                break;
+            case PAUSED:
+                timePosition = System.currentTimeMillis() - trackStartMillis;
+                break;
+            case STOPPED:
+                timePosition = 0;
+                break;
+        }
         setChanged();
         notifyObservers(EVENT_PLAYBACK_STATE_CHANGED);
     }
@@ -245,5 +268,31 @@ public class MopidyStatus extends Observable{
             setChanged();
             notifyObservers(EVENT_SINGLE_OPTION_CHANGED);
         }
+    }
+
+    public int getCurrentSeekPos(){
+        if (playbackState == PLAYING){
+            return (int) (System.currentTimeMillis() - trackStartMillis);
+        }else{
+            return (int) timePosition;
+        }
+    }
+
+    public String getCurrentSeekPosString(){
+        return milisToHumanTime(getCurrentSeekPos());
+    }
+
+    public static String milisToHumanTime(long pTime){
+        int seconds = ((int) pTime/1000) % 60;
+        int minutes = (int) (pTime / 60000);
+        String time = String.valueOf(minutes) + ":";
+        if (seconds == 0){
+            time = time + "00";
+        }else if (seconds<10){
+            time = time + "0" + String.valueOf(seconds);
+        }else{
+            time = time + String.valueOf(seconds);
+        }
+        return time;
     }
 }

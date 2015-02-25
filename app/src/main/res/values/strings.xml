@@ -50,5 +50,6 @@
     <string name="about">About</string>
     <string name="about_message">This app uses the following libraries:\n\nhttps://github.com/koush/AndroidAsync\n\nhttps://github.com/nostra13/Android-Universal-Image-Loader\n\nAnd of course this app would not be here without https://www.mopidy.com</string>
 
+    <string name="time">0:00</string>
 
 </resources>

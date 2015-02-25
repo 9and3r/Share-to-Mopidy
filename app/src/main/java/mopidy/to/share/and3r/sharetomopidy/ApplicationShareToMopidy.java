@@ -28,7 +28,7 @@ public class ApplicationShareToMopidy extends Application {
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheOnDisk(true)
-                .cacheInMemory(false)
+                .cacheInMemory(true)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).defaultDisplayImageOptions(options).build();
         // Initialize ImageLoader with configuration.

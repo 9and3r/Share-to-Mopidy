@@ -46,7 +46,6 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerHolder> {
         }else{
             return MopidyServerConfigManager.get().getConfig(null, position, false).hashCode();
         }
-
     }
 
     @Override

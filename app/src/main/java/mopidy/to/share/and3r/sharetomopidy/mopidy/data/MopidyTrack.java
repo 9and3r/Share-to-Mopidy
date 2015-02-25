@@ -1,5 +1,7 @@
 package mopidy.to.share.and3r.sharetomopidy.mopidy.data;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,7 +12,7 @@ public class MopidyTrack {
     private String tl_track;
     private String trackString;
     private MopidyAlbum album;
-    private long length;
+    private int length;
 
 
 
@@ -27,7 +29,7 @@ public class MopidyTrack {
             album = new MopidyAlbum(new JSONObject());
         }
         try{
-            length = pObject.getLong("length");
+            length = pObject.getJSONObject("track").getInt("length");
         }catch (JSONException e){
             length = 0;
         }
@@ -53,7 +55,7 @@ public class MopidyTrack {
         return album.getArtistsString();
     }
 
-    public long getLength() {
+    public int getLength() {
         return length;
     }
 

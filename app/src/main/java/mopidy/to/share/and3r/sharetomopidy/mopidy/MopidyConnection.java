@@ -52,6 +52,10 @@ public class MopidyConnection {
 
             checkOptions();
 
+            action.put("id",9);
+            action.setMethod("core.playback.get_time_position");
+            actionsNoReturn.addLast(action.toString());
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -140,6 +144,8 @@ public class MopidyConnection {
                     addAction(json.toString());
                 }else if (event.equals("options_changed")){
                     checkOptions();
+                }else if (event.equals("seeked")){
+                    MopidyStatus.get().onSeek(object.getLong("time_position"));
                 }
             }else if (object.has("id") && !object.isNull("id")){
                 int id = object.getInt("id");
@@ -179,6 +185,8 @@ public class MopidyConnection {
                     case 8:
                         MopidyStatus.get().setConsume(object.getBoolean("result"));
                         break;
+                    case 9:
+                        MopidyStatus.get().onSeek(object.getInt("result"));
                     }
 
             }
