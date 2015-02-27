@@ -10,11 +10,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -37,6 +39,7 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
     private NowPlayingFragment nowPlayingFragment;
     private ViewPager mPager;
     private MyAdapter mPagerAdapter;
+    //private View connectedPager;
 
 
     private static final int FRAGMENT_TRACKLIST = 0;
@@ -56,8 +59,20 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
         slidingUpPanelLayout.setPanelSlideListener(nowPlayingFragment);
         nowPlayingFragment.setSlidingPanel(slidingUpPanelLayout);
 
+        //connectedPager = findViewById(R.id.connected_content);
+        mPager.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
+
 
     }
+
+
+    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        public void onGlobalLayout() {
+            mPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            nowPlayingFragment.setConnectedContentLayout(mPager, mPager.getHeight());
+
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

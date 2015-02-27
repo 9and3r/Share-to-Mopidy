@@ -1,7 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
 
 import org.json.JSONException;
@@ -11,6 +10,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import mopidy.to.share.and3r.sharetomopidy.MopidyService;
+import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
@@ -37,20 +37,7 @@ public class TrackListAdapter extends BaseListAdapter implements Observer{
 
     @Override
     public void onClick(View v, int item) {
-        Intent intent = new Intent(v.getContext(), MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        DefaultJSON json = new DefaultJSON();
-        try {
-            json.setMethod("core.playback.play");
-            JSONObject params = new JSONObject();
-            params.put("tl_track", new JSONObject(((MopidyTlTrack)list[item]).getTl_track()));
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            v.getContext().startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        PlaybackControlManager.playTrackListTlTrack(v.getContext(), (MopidyTlTrack)list[item]);
     }
 
     @Override

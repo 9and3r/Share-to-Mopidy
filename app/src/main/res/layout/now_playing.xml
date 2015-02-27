@@ -6,12 +6,12 @@
     <RelativeLayout
         android:id="@+id/small_now_playing"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/primary_dark">
 
         <ImageView
-            android:layout_width="54dp"
-            android:layout_height="54dp"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
             android:id="@+id/small_album_art"
             android:layout_margin="0dp"
             android:scaleType="centerCrop"
@@ -43,22 +43,20 @@
             android:layout_alignParentBottom="true" />
 
         <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
             android:id="@+id/playPauseButtonSmallView"
             android:src="@drawable/ic_action_play"
             android:layout_toLeftOf="@+id/nextButtonSmallView"
-            android:layout_toStartOf="@+id/nextButtonSmallView"
-            android:layout_margin="8dp" />
+            android:layout_toStartOf="@+id/nextButtonSmallView" />
 
         <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
             android:id="@+id/nextButtonSmallView"
             android:src="@drawable/ic_action_next"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="8dp" />
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
 
@@ -67,7 +65,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:layout_margin="0dp"
-        android:id="@+id/now_playing_content">
+        android:id="@+id/now_playing_content"
+        android:layout_gravity="bottom">
 
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -80,7 +79,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="144dp"
+        android:layout_height="128dp"
         android:layout_margin="0dp"
         android:background="@color/primary_dark"
         android:layout_alignParentBottom="true"
@@ -89,11 +88,12 @@
 
         <SeekBar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:id="@+id/seekBar"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/currenSeekPositionTextView"
-            android:layout_toEndOf="@+id/currenSeekPositionTextView" />
+            android:layout_toLeftOf="@+id/trackLenghtTextView"
+            android:layout_toStartOf="@+id/trackLenghtTextView" />
 
         <TableRow
             android:id="@+id/playback_controls_table"
@@ -176,22 +176,24 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="32dp"
             android:text="@string/time"
             android:gravity="center"
             android:id="@+id/currenSeekPositionTextView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="32dp"
             android:gravity="center"
             android:text="@string/time"
             android:id="@+id/trackLenghtTextView"
             android:layout_alignRight="@+id/playback_controls_table"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="8dp" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -203,7 +205,9 @@
             android:longClickable="false"
             android:layout_toEndOf="@+id/currenSeekPositionTextView"
             android:indeterminate="false"
-            android:layout_toRightOf="@+id/muted_image_view" />
+            android:layout_toRightOf="@+id/muted_image_view"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
 
         <ImageView
             android:layout_width="32dp"

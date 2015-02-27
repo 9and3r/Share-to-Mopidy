@@ -1,6 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.fragments;
 
-import android.content.Intent;
+import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,35 +9,32 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.graphics.Palette;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Observable;
 import java.util.Observer;
 
-import mopidy.to.share.and3r.sharetomopidy.MopidyService;
 import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPalleteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.ConnectedActivity;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.TrackPagerAdapter;
 
 public class NowPlayingFragment extends Fragment implements Observer, SeekBar.OnSeekBarChangeListener, SlidingUpPanelLayout.PanelSlideListener {
@@ -45,6 +42,7 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
     private TrackPagerAdapter adapter;
     private ViewPager pager;
     private ImageView playButton;
+
 
 
 
@@ -102,8 +100,13 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
     private int nowPlayingContentBigHeight;
     private View rootView;
 
+
+
     private View playBackControls;
     private int playBackControlsHeight;
+
+    private View connectedContentLayout;
+    private int connectedContentLayoutHeight;
 
     private float anchorPoint;
 
@@ -111,6 +114,11 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
 
     public void setSlidingPanel(SlidingUpPanelLayout slidingPanel) {
         this.slidingPanel = slidingPanel;
+    }
+
+    public void setConnectedContentLayout(View pLayout, int pSize){
+        connectedContentLayout = pLayout;
+        connectedContentLayoutHeight = pSize;
     }
 
     private SlidingUpPanelLayout slidingPanel;
@@ -145,7 +153,7 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         playBackControls = rootView.findViewById(R.id.playback_controls);
         playBackControlsHeight = playBackControls.getLayoutParams().height;
         nowPlayingContentBig = rootView.findViewById(R.id.now_playing_content);
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
+        nowPlayingContentBig.getViewTreeObserver().addOnGlobalLayoutListener(playingBigContentListener);
 
 
 
@@ -157,24 +165,9 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
 
             @Override
             public void onPageSelected(int position) {
-                if (MopidyStatus.get().getConnectionStatus() == MopidyStatus.CONNECTED) {
-                    if (position != MopidyStatus.get().getCurrentPos()) {
-                        Intent nextIntent = new Intent(getActivity(), MopidyService.class);
-                        nextIntent.setAction(MopidyService.ACTION_ONE_ACTION);
-                        DefaultJSON nextJSON = new DefaultJSON();
-                        nextJSON.setMethod("core.playback.change_track");
-                        JSONObject params = new JSONObject();
-                        try {
-                            params.put("tl_track", new JSONObject(MopidyStatus.get().getTrack(position).getTl_track()));
-                            nextJSON.put("params", params);
-                            nextIntent.putExtra(MopidyService.ACTION_DATA, nextJSON.toString());
-                            getActivity().startService(nextIntent);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                if (position != MopidyStatus.get().getCurrentPos()) {
+                    PlaybackControlManager.playTrackListTlTrack(getActivity(), position);
                 }
-
 
             }
 
@@ -190,61 +183,67 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         repeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeRepeat();
+                PlaybackControlManager.changeRepeat(v.getContext());
             }
         });
         singleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeSingle();
+                PlaybackControlManager.changeSingle(v.getContext());
             }
         });
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playOrPause();
+                PlaybackControlManager.playOrPause(v.getContext());
             }
         });
         randomButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeRandom();
+                PlaybackControlManager.changeRandom(v.getContext());
             }
         });
         consumeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeConsume();
+                PlaybackControlManager.changeConsume(v.getContext());
             }
         });
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                next();
+                PlaybackControlManager.next(v.getContext());
             }
         });
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                previous();
+                PlaybackControlManager.previous(v.getContext());
             }
         });
         smallPlayPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playOrPause();
+                PlaybackControlManager.playOrPause(v.getContext());
             }
         });
         smallNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                next();
+                PlaybackControlManager.next(v.getContext());
             }
         });
         mutedImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeMute();
+                PlaybackControlManager.changeMute(v.getContext());
+            }
+        });
+        smallNowPlaying.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
             }
         });
         positionSeekBar.setOnSeekBarChangeListener(this);
@@ -270,10 +269,10 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
 
     }
 
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+    private ViewTreeObserver.OnGlobalLayoutListener playingBigContentListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         public void onGlobalLayout() {
-            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            nowPlayingContentBigHeight = rootView.getHeight();
+            nowPlayingContentBig.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            nowPlayingContentBigHeight = rootView.getHeight() - smallNowPlaying.getHeight();
             anchorPoint = (float)playBackControlsHeight / (float)nowPlayingContentBigHeight;
             slidingPanel.setAnchorPoint(anchorPoint);
             if (panelState != null){
@@ -282,13 +281,11 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
                     point = 0f;
                 }
                 onPanelSlide(slidingPanel, point);
-
             }
-
-
-
         }
     };
+
+
 
 
     @Override
@@ -423,98 +420,16 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         }
     }
 
-    private void changeMute(){
-        Intent intent = new Intent(getActivity(), MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.playback.set_mute");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isMute());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            getActivity().startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void changeRandom(){
-        Intent intent = new Intent(getActivity(), MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_random");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isRandom());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            getActivity().startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void changeRepeat(){
-        Intent intent = new Intent(getActivity(), MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_repeat");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isRepeat());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            getActivity().startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void playOrPause(){
-        PlaybackControlManager.playOrPause(getActivity());
-    }
-
-    public void next(){
-        PlaybackControlManager.next(getActivity());
-    }
-
-    public void previous(){
-        PlaybackControlManager.previous(getActivity());
-    }
 
 
-    public void changeSingle(){
-        Intent intent = new Intent(getActivity(), MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_single");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isSingle());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            getActivity().startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void changeConsume(){
-        Intent intent = new Intent(getActivity(), MopidyService.class);
-        intent.setAction(MopidyService.ACTION_ONE_ACTION);
-        try {
-            DefaultJSON json = new DefaultJSON();
-            json.setMethod("core.tracklist.set_consume");
-            JSONObject params = new JSONObject();
-            params.put("value",!MopidyStatus.get().isConsume());
-            json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            getActivity().startService(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+
+
+
+
+
+
+
 
     @Override
     public void update(Observable observable, Object data) {
@@ -573,32 +488,11 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         if (fromUser){
-            Intent intent = new Intent(getActivity(), MopidyService.class);
-            intent.setAction(MopidyService.ACTION_ONE_ACTION);
-            DefaultJSON json = new DefaultJSON();
             if (seekBar == positionSeekBar){
-                try {
-                    json.setMethod("core.playback.seek");
-                    JSONObject params = new JSONObject();
-                    params.put("time_position",seekBar.getProgress());
-                    json.put("params", params);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                PlaybackControlManager.seekTo(seekBar.getContext(), seekBar.getProgress());
             }else{
-                try {
-                    json.setMethod("core.playback.set_volume");
-                    JSONObject params = new JSONObject();
-                    params.put("volume",seekBar.getProgress());
-                    json.put("params", params);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                PlaybackControlManager.changeVolume(seekBar.getContext(), seekBar.getProgress());
             }
-
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
-            getActivity().startService(intent);
             fromUser = false;
         }
 
@@ -606,6 +500,8 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
 
     @Override
     public void onPanelSlide(View view, float v) {
+
+        /*
         if (v < 1.0f) {
             smallNowPlaying.setVisibility(View.VISIBLE);
         } else {
@@ -634,12 +530,53 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         smallNextButton.setAlpha(alpha);
         smallPlayPauseButton.setAlpha(alpha);
 
-        params.height = (int) ((1-v2) * smallNowPlayingHeight);
-        smallNowPlaying.setLayoutParams(params);
+        //params.height = (int) ((1-v2) * smallNowPlayingHeight);
+        //smallNowPlaying.setLayoutParams(params);
+
+
+
+*/
+        float alpha = 0;
+        if (v < 1.0f) {
+            alpha = (1-v/anchorPoint);
+        }else{
+            alpha = 0;
+        }
+        if (alpha > 0){
+            smallNextButton.setVisibility(View.VISIBLE);
+            smallPlayPauseButton.setVisibility(View.VISIBLE);
+        }else{
+            smallNextButton.setVisibility(View.GONE);
+            smallPlayPauseButton.setVisibility(View.GONE);
+        }
+        smallNextButton.setAlpha(alpha);
+        smallPlayPauseButton.setAlpha(alpha);
+
 
         LinearLayout.LayoutParams paramsBig = (LinearLayout.LayoutParams) nowPlayingContentBig.getLayoutParams();
-        paramsBig.height = (int) (v * nowPlayingContentBigHeight);
+        paramsBig.height = (int) (v * (nowPlayingContentBigHeight));
         nowPlayingContentBig.setLayoutParams(paramsBig);
+
+
+        int contentSize = 0;
+        if (v>anchorPoint){
+            contentSize = connectedContentLayoutHeight -(int) (((float)connectedContentLayoutHeight)*anchorPoint);
+        }else{
+            contentSize = connectedContentLayoutHeight -(int) (((float)connectedContentLayoutHeight)*v);
+        }
+
+        LinearLayout.LayoutParams paramsContent = (LinearLayout.LayoutParams) connectedContentLayout.getLayoutParams();
+        paramsContent.height = contentSize;
+        connectedContentLayout.setLayoutParams(paramsContent);
+
+        ConnectedActivity activity = (ConnectedActivity) getActivity();
+        float changePoint = (float) (connectedContentLayoutHeight-activity.getSupportActionBar().getHeight()) / (float) connectedContentLayoutHeight;
+        if (v>changePoint){
+            activity.getSupportActionBar().hide();
+        }else{
+            activity.getSupportActionBar().show();
+        }
+
     }
 
     @Override
