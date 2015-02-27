@@ -1,31 +1,15 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Observable;
 import java.util.Observer;
 
-import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
-import mopidy.to.share.and3r.sharetomopidy.MopidyService;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.R;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.TrackPagerAdapter;
-
-import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.NowPlayingFragment;
 
 
 public class NotConnectedActivity extends ActionBarActivity implements Observer {

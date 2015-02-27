@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
-
+import android.widget.ImageView;
 
 
 import org.json.JSONArray;
@@ -34,31 +34,34 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
 
     private static final String BASE_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=59a04c6a73fb99d6e8996e01db306829&artist=%s&album=%s&format=json";
 
-    private MopidyAlbum album;
+    private MopidyDataWithImage data;
     private OnImageAndPalleteReady callback;
     private Bitmap bitmap;
     private Palette palette;
+    private int width;
+    private int height;
 
 
-    public TaskImage(OnImageAndPalleteReady pCallback, MopidyAlbum pAlbum){
+    public TaskImage(OnImageAndPalleteReady pCallback, MopidyDataWithImage pData,int pWidth,int pHeight){
         callback = pCallback;
-        album = pAlbum;
+        data = pData;
+        width = pWidth;
+        height = pHeight;
     }
 
     @Override
     protected Bitmap doInBackground(Context... params) {
-        File f = new File(new File(params[0].getFilesDir(),"images"), album.getAlbumArtFileName());
-        Log.d("Proba", f.getAbsolutePath());
+        File f = new File(new File(params[0].getFilesDir(),"images"), data.getAlbum().getAlbumArtFileName());
         boolean correctlyDownloaded = true;
         if (!f.exists()){
-            correctlyDownloaded = findUrlAnddownloadImageToStorage(params[0], f);
+            correctlyDownloaded = findUrlAndDownloadImageToStorage(params[0], f);
         }
         if (correctlyDownloaded && !isCancelled()){
-            bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
-            palette = album.getPalette();
+            bitmap = decodeSampledBitmapFromResource(f, width, height);
+            palette = data.getPalette();
             if (bitmap != null && palette == null){
                 palette = Palette.generate(bitmap);
-                album.setPalette(palette);
+                data.setPalette(palette);
             }
             return bitmap;
         }else{
@@ -66,17 +69,19 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
         }
     }
 
-    private boolean findUrlAnddownloadImageToStorage(Context c, File f){
-        MopidyArtist[] artists = album.getArtists();
+    private boolean findUrlAndDownloadImageToStorage(Context c, File f){
+        MopidyArtist[] artists = data.getAlbum().getArtists();
         boolean found = false;
         int i = 0;
-        String url = PreferencesManager.get().getImageUrl(c, album.getAlbumDownloadName());
+        String url = PreferencesManager.get().getImageUrl(c, data.getAlbum().getAlbumDownloadName());
         if (url == null){
             while(!found && i<artists.length && !isCancelled()){
                 url = getDownloadURLWithArtist(artists[i]);
                 if (url != null){
                     found = true;
-                    PreferencesManager.get().saveImageUrl(c, album.getAlbumDownloadName(), url);
+                    PreferencesManager.get().saveImageUrl(c, data.getAlbum().getAlbumDownloadName(), url);
+                }else{
+                    i++;
                 }
             }
         }else{
@@ -117,7 +122,8 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
             }
             correctlyDonwloaded = true;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.d("URL not valid", pUrl);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -154,8 +160,7 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
 
     private String getDownloadURLWithArtist(MopidyArtist pArtist){
         try {
-            Log.d("Proba", "Billatzen artista");
-            String safeAlbum = URLEncoder.encode(album.getAlbumName(), "utf-8");
+            String safeAlbum = URLEncoder.encode(data.getAlbum().getAlbumName(), "utf-8");
             String safeArtist = URLEncoder.encode(pArtist.getArtistName(), "utf-8");
             JSONObject object = getJSONFromURL(String.format(BASE_URL, safeArtist, safeAlbum));
             JSONArray array = object.getJSONObject("album").getJSONArray("image");
@@ -169,7 +174,6 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
 
     private JSONObject getJSONFromURL(String pUrl){
         try {
-            Log.d("Proba url",pUrl);
             URL url = new URL(pUrl);
             InputStream is = url.openStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -180,13 +184,51 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
             }
             br.close();
             is.close();
-            Log.d("Proba", fullText);
             return new JSONObject(fullText);
 
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static Bitmap decodeSampledBitmapFromResource(File f,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(f.getAbsolutePath(), options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(f.getAbsolutePath(), options);
+    }
+
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
 }

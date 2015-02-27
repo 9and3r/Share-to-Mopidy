@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyPlaylist;
 
 
 public class MopidyConnection {
@@ -55,6 +56,22 @@ public class MopidyConnection {
             action.put("id",9);
             action.setMethod("core.playback.get_time_position");
             actionsNoReturn.addLast(action.toString());
+
+            action.put("id",10);
+            action.setMethod("core.playback.get_volume");
+            actionsNoReturn.addLast(action.toString());
+
+            action.put("id",11);
+            action.setMethod("core.playback.get_mute");
+            actionsNoReturn.addLast(action.toString());
+
+            DefaultJSON action2 = new DefaultJSON();
+            action2.put("id",12);
+            action2.setMethod("core.playlists.get_playlists");
+            JSONObject params = new JSONObject();
+            params.put("include_tracks", false);
+            action2.put("params", params);
+            actionsNoReturn.addLast(action2.toString());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -146,6 +163,10 @@ public class MopidyConnection {
                     checkOptions();
                 }else if (event.equals("seeked")){
                     MopidyStatus.get().onSeek(object.getLong("time_position"));
+                }else if (event.equals("mute_changed")){
+                    MopidyStatus.get().setMute(object.getBoolean("mute"));
+                }else if (event.equals("volume_changed")){
+                    MopidyStatus.get().setVolume(object.getInt("volume"));
                 }
             }else if (object.has("id") && !object.isNull("id")){
                 int id = object.getInt("id");
@@ -187,6 +208,16 @@ public class MopidyConnection {
                         break;
                     case 9:
                         MopidyStatus.get().onSeek(object.getInt("result"));
+                        break;
+                    case 10:
+                        MopidyStatus.get().setVolume(object.getInt("result"));
+                        break;
+                    case 11:
+                        MopidyStatus.get().setMute(object.getBoolean("result"));
+                        break;
+                    case 12:
+                        JSONArray playlists = object.getJSONArray("result");
+                        MopidyStatus.get().onPlaylistsChanged(playlists);
                     }
 
             }

@@ -9,13 +9,16 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 
-public class MopidyAlbum implements Serializable{
+public class MopidyAlbum extends MopidyDataWithImage implements Serializable{
 
     private String albumName;
     private MopidyArtist[] artists;
-    private transient Palette palette;
+
+
+
 
     public MopidyAlbum(JSONObject object){
+        super(object);
         try{
             albumName = object.getString("name");
             JSONArray artistsJSON = object.getJSONArray("artists");
@@ -27,6 +30,16 @@ public class MopidyAlbum implements Serializable{
             artists = new MopidyArtist[0];
             albumName = "";
         }
+    }
+
+    @Override
+    public String getTitle() {
+        return albumName;
+    }
+
+    @Override
+    public MopidyAlbum getAlbum() {
+        return this;
     }
 
     public String getAlbumName() {
@@ -53,25 +66,6 @@ public class MopidyAlbum implements Serializable{
         return getAlbumName() + "#" + getArtistsString();
     }
 
-
-    public Palette getPalette() {
-        return palette;
-    }
-
-    public void setPalette(Palette palette) {
-        this.palette = palette;
-    }
-
-    public Palette.Swatch getSwatch(){
-        Palette.Swatch s;
-        s = palette.getVibrantSwatch();
-        if (s != null){
-            return s;
-        }else{
-            return palette.getMutedSwatch();
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o instanceof MopidyAlbum){
@@ -88,4 +82,6 @@ public class MopidyAlbum implements Serializable{
         fileName = fileName.replace("/", "-");
         return fileName;
     }
+
+
 }

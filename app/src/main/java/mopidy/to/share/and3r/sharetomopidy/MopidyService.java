@@ -24,12 +24,12 @@ import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyConnection;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
 import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfig;
 import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfigManager;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPalleteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.ConnectedActivity;
+import mopidy.to.share.and3r.sharetomopidy.receiver.MediaButtonsReceiver;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.NotConnectedActivity;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.StartActivity;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.configuration.tutorial.ConfigurationActivity;
@@ -205,7 +205,7 @@ public class MopidyService extends Service implements Observer {
     }
 
     public void onTrackChanged(){
-        MopidyTrack track = MopidyStatus.get().getCurrentTrack();
+        MopidyTlTrack track = MopidyStatus.get().getCurrentTrack();
         changeMetadata();
         changeNotification();
         if (track != null){
@@ -244,7 +244,7 @@ public class MopidyService extends Service implements Observer {
                 task = null;
                 onBitmapLoaded();
             }
-        }, pAlbum);
+        }, pAlbum, 512, 512);
         task.execute(getApplicationContext());
     }
 

@@ -55,6 +55,6 @@
         android:layout_weight="1"
         android:id="@+id/albumImageView"
         android:scaleType="fitCenter"
-        android:layout_margin="15dp"/>
+        android:layout_margin="6dp"/>
 
 </LinearLayout>

@@ -1,15 +1,13 @@
 package mopidy.to.share.and3r.sharetomopidy.mopidy;
 
-import android.content.Intent;
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Observable;
 
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyPlaylist;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
 
 public class MopidyStatus extends Observable{
 
@@ -40,16 +38,22 @@ public class MopidyStatus extends Observable{
     public static final int EVENT_RANDOM_OPTION_CHANGED = 4;
     public static final int EVENT_SINGLE_OPTION_CHANGED = 5;
     public static final int EVENT_CONSUME_OPTION_CHANGED = 6;
+    public static final int EVENT_MUTE_CHANGED = 7;
+    public static final int EVENT_VOLUME_CHANGED = 8;
+    public static final int EVENT_PLAYLISTS_CHANGED = 10;
 
-    public static final int EVENT_SEEK = 7;
+    public static final int EVENT_SEEK = 9;
 
     private int connectionStatus;
 
-    private MopidyTrack[] tracklist;
+    private MopidyTlTrack[] tracklist;
     private boolean repeat;
     private boolean random;
     private boolean consume;
     private boolean single;
+    private boolean mute;
+    private int volume;
+    private MopidyPlaylist[] playlists;
 
     private long trackStartMillis;
     private long timePosition;
@@ -75,12 +79,13 @@ public class MopidyStatus extends Observable{
     public void reset(){
         setConnectionStatus(NOT_CONNECTED);
         playbackState = STOPPED;
-        tracklist = new MopidyTrack[0];
+        tracklist = new MopidyTlTrack[0];
+        playlists = new MopidyPlaylist[0];
         currentPos = 0;
     }
 
 
-    public MopidyTrack getCurrentTrack(){
+    public MopidyTlTrack getCurrentTrack(){
         if (currentPos<tracklist.length && currentPos>=0){
             return tracklist[currentPos];
         }else{
@@ -120,7 +125,7 @@ public class MopidyStatus extends Observable{
         }
     }
 
-    public MopidyTrack getTrack(int pPos){
+    public MopidyTlTrack getTrack(int pPos){
         if (pPos<tracklist.length && pPos>=0){
             return tracklist[pPos];
         }else{
@@ -160,23 +165,23 @@ public class MopidyStatus extends Observable{
         }
     }
 
-    public MopidyTrack[] getTracklist() {
+    public MopidyTlTrack[] getTracklist() {
         return tracklist;
     }
 
     public void tracklistChanged(JSONArray array){
         if (array != null){
-            MopidyTrack[] tracks = new MopidyTrack[array.length()];
+            MopidyTlTrack[] tracks = new MopidyTlTrack[array.length()];
             for (int i=0; i< array.length(); i++){
                 try {
-                    tracks[i] = new MopidyTrack(array.getJSONObject(i));
+                    tracks[i] = new MopidyTlTrack(array.getJSONObject(i));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
             tracklist = tracks;
         }else{
-            tracklist = new MopidyTrack[0];
+            tracklist = new MopidyTlTrack[0];
         }
         setChanged();
         notifyObservers(EVENT_TRACKLIST_CHANGED);
@@ -214,6 +219,25 @@ public class MopidyStatus extends Observable{
         notifyObservers(EVENT_PLAYBACK_STATE_CHANGED);
     }
 
+    public MopidyPlaylist[] getPlaylists() {
+        return playlists;
+    }
+
+    public void onPlaylistsChanged(JSONArray array){
+        try {
+            MopidyPlaylist[] newPlaylists = new MopidyPlaylist[array.length()];
+            for (int i=0; i<array.length(); i++){
+                newPlaylists[i] = new MopidyPlaylist(array.getJSONObject(i));
+            }
+            playlists = newPlaylists;
+            setChanged();
+
+            notifyObservers(EVENT_PLAYLISTS_CHANGED);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public boolean isPlaying(){
         return (playbackState == PLAYING);
     }
@@ -228,6 +252,32 @@ public class MopidyStatus extends Observable{
         if (notify){
             setChanged();
             notifyObservers(EVENT_REPEAT_OPTION_CHANGED);
+        }
+    }
+
+    public boolean isMute() {
+        return mute;
+    }
+
+    public void setMute(boolean pMute) {
+        boolean notify = (mute != pMute);
+        mute = pMute;
+        if (notify){
+            setChanged();
+            notifyObservers(EVENT_MUTE_CHANGED);
+        }
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int pVolume) {
+        boolean notify = (volume != pVolume);
+        this.volume = pVolume;
+        if (notify){
+            setChanged();
+            notifyObservers(EVENT_VOLUME_CHANGED);
         }
     }
 

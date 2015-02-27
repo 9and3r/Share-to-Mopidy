@@ -94,7 +94,7 @@ action#android.intent.action.SEND
 ADDED from AndroidManifest.xml:45:17
 	android:name
 		ADDED from AndroidManifest.xml:45:25
-receiver#mopidy.to.share.and3r.sharetomopidy.MediaButtonsReceiver
+receiver#mopidy.to.share.and3r.sharetomopidy.receiver.MediaButtonsReceiver
 ADDED from AndroidManifest.xml:51:9
 	android:exported
 		ADDED from AndroidManifest.xml:53:13
