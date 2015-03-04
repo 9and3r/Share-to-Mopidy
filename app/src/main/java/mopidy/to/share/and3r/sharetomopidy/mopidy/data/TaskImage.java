@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
-import android.widget.ImageView;
 
 
 import org.json.JSONArray;
@@ -35,14 +34,14 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
     private static final String BASE_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=59a04c6a73fb99d6e8996e01db306829&artist=%s&album=%s&format=json";
 
     private MopidyDataWithImage data;
-    private OnImageAndPalleteReady callback;
+    private OnImageAndPaletteReady callback;
     private Bitmap bitmap;
     private Palette palette;
     private int width;
     private int height;
 
 
-    public TaskImage(OnImageAndPalleteReady pCallback, MopidyDataWithImage pData,int pWidth,int pHeight){
+    public TaskImage(OnImageAndPaletteReady pCallback, MopidyDataWithImage pData,int pWidth,int pHeight){
         callback = pCallback;
         data = pData;
         width = pWidth;
@@ -154,7 +153,7 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
         if (!isCancelled() && bitmap != null){
-            callback.onImageAndPalleteReady(bitmap, palette);
+            callback.onImageAndPaletteReady(bitmap, palette);
         }
     }
 

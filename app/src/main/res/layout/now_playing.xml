@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Large Text"
+            android:singleLine="true"
             android:id="@+id/small_track_name"
             android:layout_toRightOf="@+id/small_album_art"
             android:layout_toLeftOf="@+id/playPauseButtonSmallView"
@@ -33,6 +34,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
             android:id="@+id/small_artist_name"
@@ -48,7 +50,8 @@
             android:id="@+id/playPauseButtonSmallView"
             android:src="@drawable/ic_action_play"
             android:layout_toLeftOf="@+id/nextButtonSmallView"
-            android:layout_toStartOf="@+id/nextButtonSmallView" />
+            android:layout_toStartOf="@+id/nextButtonSmallView"
+            android:padding="8dp" />
 
         <ImageView
             android:layout_width="?attr/actionBarSize"
@@ -56,7 +59,8 @@
             android:id="@+id/nextButtonSmallView"
             android:src="@drawable/ic_action_next"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:padding="8dp" />
     </RelativeLayout>
 
 

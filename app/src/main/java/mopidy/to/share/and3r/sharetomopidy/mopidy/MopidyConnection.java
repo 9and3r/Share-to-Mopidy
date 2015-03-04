@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyPlaylist;
+import mopidy.to.share.and3r.sharetomopidy.utils.MopidyDataFetch;
 
 
 public class MopidyConnection {
@@ -218,6 +219,9 @@ public class MopidyConnection {
                     case 12:
                         JSONArray playlists = object.getJSONArray("result");
                         MopidyStatus.get().onPlaylistsChanged(playlists);
+                        break;
+                    default:
+                        MopidyDataFetch.get().onResultReceived(object);
                     }
 
             }

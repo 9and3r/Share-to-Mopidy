@@ -12,7 +12,7 @@ import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListA
 /**
  * Created by ander on 2/26/15.
  */
-public abstract class BaseListItem extends RecyclerView.ViewHolder{
+public abstract class BaseListItem extends BaseHolder{
 
     protected MopidyData data;
     protected int pos;
@@ -33,6 +33,8 @@ public abstract class BaseListItem extends RecyclerView.ViewHolder{
         });
     }
 
+
+    @Override
     public void setMopidyData(MopidyData pData, int i){
         data = pData;
         pos = i;

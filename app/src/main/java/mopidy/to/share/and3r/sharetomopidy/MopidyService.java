@@ -25,9 +25,9 @@ import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
 import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfig;
 import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfigManager;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPalleteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
 import mopidy.to.share.and3r.sharetomopidy.receiver.MediaButtonsReceiver;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.NotConnectedActivity;
@@ -42,8 +42,8 @@ public class MopidyService extends Service implements Observer {
     public static final String ACTION_CONNECT="CONNECT_MOPIDY";
     public static final String ACTION_STOP_SERVICE="SERVICE_STOP";
     public static final String ACTION_MAKE_ARRAY ="ACTION_MAKE_ARRAY";
-    public static final String ACTION_ARRAY_DATA ="ACTION_ARRAY_DATA";
-    public static final String ACTION_DATA="ACTION_DATA";
+    public static final String MAKE_ARRAY_DATA ="MAKE_ARRAY_DATA";
+    public static final String ONE_ACTION_DATA ="ONE_ACTION_DATA";
     public static final String ACTION_ONE_ACTION="ACTION_ONE_ACTION";
 
     public static final String CONFIG_ID="CONFIG_ID";
@@ -72,10 +72,10 @@ public class MopidyService extends Service implements Observer {
             stopConnection();
         }else if (intent.getAction() == ACTION_MAKE_ARRAY){
             startConnection(config);
-            MopidyConnection.get().addActions(intent.getStringArrayExtra(ACTION_ARRAY_DATA));
+            MopidyConnection.get().addActions(intent.getStringArrayExtra(MAKE_ARRAY_DATA));
         }else if (intent.getAction() == ACTION_ONE_ACTION){
             startConnection(config);
-            MopidyConnection.get().addAction(intent.getStringExtra(ACTION_DATA));
+            MopidyConnection.get().addAction(intent.getStringExtra(ONE_ACTION_DATA));
         }
         return START_STICKY;
     }
@@ -236,9 +236,9 @@ public class MopidyService extends Service implements Observer {
     private void loadBitmap(final MopidyAlbum pAlbum){
         lastBitmap = null;
         lastAlbum = null;
-        task = new TaskImage(new OnImageAndPalleteReady() {
+        task = new TaskImage(new OnImageAndPaletteReady() {
             @Override
-            public void onImageAndPalleteReady(Bitmap bitmap, Palette palette) {
+            public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
                 lastBitmap = bitmap;
                 lastAlbum = pAlbum;
                 task = null;
@@ -304,7 +304,7 @@ public class MopidyService extends Service implements Observer {
         previousIntent.setAction(ACTION_ONE_ACTION);
         DefaultJSON previousJSON = new DefaultJSON();
         previousJSON.setMethod("core.playback.previous");
-        previousIntent.putExtra(ACTION_DATA, previousJSON.toString());
+        previousIntent.putExtra(ONE_ACTION_DATA, previousJSON.toString());
         PendingIntent pendingPrevious = PendingIntent.getService(this,1,previousIntent,0);
 
         // Next intent
@@ -312,7 +312,7 @@ public class MopidyService extends Service implements Observer {
         nextIntent.setAction(ACTION_ONE_ACTION);
         DefaultJSON nextJSON = new DefaultJSON();
         nextJSON.setMethod("core.playback.next");
-        nextIntent.putExtra(ACTION_DATA, nextJSON.toString());
+        nextIntent.putExtra(ONE_ACTION_DATA, nextJSON.toString());
         PendingIntent pendingNext = PendingIntent.getService(this,2,nextIntent,0);
 
 
@@ -328,7 +328,7 @@ public class MopidyService extends Service implements Observer {
             playJSON.setMethod("core.playback.play");
             playPauseDrawable = R.drawable.ic_action_play;
         }
-        playIntent.putExtra(ACTION_DATA, playJSON.toString());
+        playIntent.putExtra(ONE_ACTION_DATA, playJSON.toString());
         PendingIntent pendingPlayPause = PendingIntent.getService(this,3,playIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder builder = new Notification.Builder(this);
 

@@ -1,6 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.fragments;
 
-import android.app.ActionBar;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,15 +9,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.graphics.Palette;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -32,10 +31,11 @@ import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPalleteReady;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.ConnectedActivity;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.TrackPagerAdapter;
+import mopidy.to.share.and3r.sharetomopidy.utils.PaletteManager;
 
 public class NowPlayingFragment extends Fragment implements Observer, SeekBar.OnSeekBarChangeListener, SlidingUpPanelLayout.PanelSlideListener {
 
@@ -101,6 +101,7 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
     private View rootView;
 
 
+    private MopidyAlbum previousAlbum;
 
     private View playBackControls;
     private int playBackControlsHeight;
@@ -266,7 +267,6 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         if (savedInstanceState != null){
             panelState = (SlidingUpPanelLayout.PanelState) savedInstanceState.getSerializable("PANEL_STATE");
         }
-
     }
 
     private ViewTreeObserver.OnGlobalLayoutListener playingBigContentListener = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -276,11 +276,7 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
             anchorPoint = (float)playBackControlsHeight / (float)nowPlayingContentBigHeight;
             slidingPanel.setAnchorPoint(anchorPoint);
             if (panelState != null){
-                float point = 1f;
-                if (panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
-                    point = 0f;
-                }
-                onPanelSlide(slidingPanel, point);
+                slidingPanel.setPanelState(panelState);
             }
         }
     };
@@ -345,22 +341,38 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         trackLenghtTextView.setText(MopidyStatus.milisToHumanTime(MopidyStatus.get().getCurrentTrackLenght()));
         smallTrackName.setText(MopidyStatus.get().getCurrentTrackName());
         smallArtistName.setText(MopidyStatus.get().getCurrentArtistsName());
-        if (taskImage != null && !taskImage.isCancelled()){
-            taskImage.cancel(true);
-            taskImage = null;
-        }
-        smallAlbumArt.setImageResource(R.drawable.no_album);
         MopidyTlTrack track = MopidyStatus.get().getCurrentTrack();
+
+        //TODO Gaizki dago
+        boolean loadNewAlbumArt = false;
         if (track != null){
-            MopidyAlbum album = MopidyStatus.get().getCurrentTrack().getAlbum();
-            if (album != null){
-                TaskImage task = new TaskImage(new OnImageAndPalleteReady() {
+            if (previousAlbum != null){
+                if (track.getAlbum() != null){
+                    if(!previousAlbum.equals(track.getAlbum())){
+                        if (taskImage != null && !taskImage.isCancelled()){
+                            taskImage.cancel(true);
+                            taskImage = null;
+                        }
+                    }
+                    loadNewAlbumArt = true;
+                }else{
+                    loadNewAlbumArt = false;
+                }
+            }else{
+                loadNewAlbumArt = (track.getAlbum() != null);
+            }
+        }else{
+            loadNewAlbumArt = false;
+        }
+        if (loadNewAlbumArt){
+            previousAlbum = MopidyStatus.get().getCurrentTrack().getAlbum();
+                TaskImage task = new TaskImage(new OnImageAndPaletteReady() {
                     @Override
-                    public void onImageAndPalleteReady(Bitmap bitmap, Palette palette) {
+                    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
                         smallAlbumArt.setImageBitmap(bitmap);
                         taskImage = null;
                         if (palette != null) {
-                            Palette.Swatch s = palette.getDarkVibrantSwatch();
+                            Palette.Swatch s = PaletteManager.getVibrantDarkSwatch(palette);
                             if (s != null) {
                                 smallNowPlaying.setBackgroundColor(s.getRgb());
                                 playBackControls.setBackgroundColor(s.getRgb());
@@ -369,9 +381,11 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
                             }
                         }
                     }
-                } , album, smallNowPlayingHeight, smallNowPlayingHeight);
+                } , previousAlbum, smallNowPlayingHeight, smallNowPlayingHeight);
                 task.execute(getActivity());
-            }
+        }else{
+            smallAlbumArt.setImageResource(R.drawable.no_album);
+            previousAlbum = null;
         }
     }
 
@@ -501,41 +515,10 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
     @Override
     public void onPanelSlide(View view, float v) {
 
-        /*
-        if (v < 1.0f) {
-            smallNowPlaying.setVisibility(View.VISIBLE);
-        } else {
-            smallNowPlaying.setVisibility(View.GONE);
-        }
-
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) smallNowPlaying.getLayoutParams();
-        float v2;
-        float alpha;
-        if (v < anchorPoint){
-            v2 = 0;
-            alpha = (1-v/anchorPoint);
-            smallNextButton.setVisibility(View.VISIBLE);
-            smallPlayPauseButton.setVisibility(View.VISIBLE);
-        }else if (v > anchorPoint){
-            alpha = 0;
-            smallNextButton.setVisibility(View.GONE);
-            smallPlayPauseButton.setVisibility(View.GONE);
-            v2 = ((v-anchorPoint)/(1-anchorPoint));
-        }else{
-            alpha = 0;
-            smallNextButton.setVisibility(View.GONE);
-            smallPlayPauseButton.setVisibility(View.GONE);
-            v2 = 0;
-        }
-        smallNextButton.setAlpha(alpha);
-        smallPlayPauseButton.setAlpha(alpha);
-
-        //params.height = (int) ((1-v2) * smallNowPlayingHeight);
-        //smallNowPlaying.setLayoutParams(params);
 
 
 
-*/
+
         float alpha = 0;
         if (v < 1.0f) {
             alpha = (1-v/anchorPoint);
@@ -558,45 +541,60 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         nowPlayingContentBig.setLayoutParams(paramsBig);
 
 
+
+        final TypedArray styledAttributes = getActivity().getTheme().obtainStyledAttributes(
+                new int[] { android.R.attr.actionBarSize });
+
+
+        ConnectedActivity activity = (ConnectedActivity) getActivity();
+        int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
         int contentSize = 0;
         if (v>anchorPoint){
-            contentSize = connectedContentLayoutHeight -(int) (((float)connectedContentLayoutHeight)*anchorPoint);
+            contentSize = connectedContentLayoutHeight -(int) (((float)connectedContentLayoutHeight + mActionBarSize)*anchorPoint);
         }else{
-            contentSize = connectedContentLayoutHeight -(int) (((float)connectedContentLayoutHeight)*v);
+            contentSize = connectedContentLayoutHeight -(int) (((float)connectedContentLayoutHeight + mActionBarSize)*v);
         }
 
         LinearLayout.LayoutParams paramsContent = (LinearLayout.LayoutParams) connectedContentLayout.getLayoutParams();
         paramsContent.height = contentSize;
         connectedContentLayout.setLayoutParams(paramsContent);
 
-        ConnectedActivity activity = (ConnectedActivity) getActivity();
-        float changePoint = (float) (connectedContentLayoutHeight-activity.getSupportActionBar().getHeight()) / (float) connectedContentLayoutHeight;
-        if (v>changePoint){
-            activity.getSupportActionBar().hide();
-        }else{
-            activity.getSupportActionBar().show();
-        }
 
+
+
+
+
+        float changePoint = (float) (connectedContentLayoutHeight - mActionBarSize)/ (float) connectedContentLayoutHeight;
+        int offset = 0;
+        if (v > changePoint){
+            offset = (int)((v-changePoint)/(1-changePoint) * activity.getSupportActionBar().getHeight());
+        }
+        activity.getSupportActionBar().setHideOffset(offset);
     }
 
     @Override
     public void onPanelCollapsed(View view) {
-
+        onPanelSlide(slidingPanel, 0);
     }
 
     @Override
     public void onPanelExpanded(View view) {
-
+        onPanelSlide(slidingPanel, 1.0f);
     }
 
     @Override
     public void onPanelAnchored(View view) {
         smallNextButton.setVisibility(View.GONE);
         smallPlayPauseButton.setVisibility(View.GONE);
+        onPanelSlide(slidingPanel, anchorPoint);
     }
 
     @Override
     public void onPanelHidden(View view) {
 
     }
+
+
 }

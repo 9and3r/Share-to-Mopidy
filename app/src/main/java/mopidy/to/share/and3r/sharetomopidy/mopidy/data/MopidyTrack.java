@@ -68,4 +68,5 @@ public class MopidyTrack extends MopidyDataWithImage {
     public String getSubTitle() {
         return getArtistsString();
     }
+
 }

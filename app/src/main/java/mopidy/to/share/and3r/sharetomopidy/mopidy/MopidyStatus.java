@@ -6,8 +6,10 @@ import org.json.JSONObject;
 
 import java.util.Observable;
 
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyPlaylist;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
 
 public class MopidyStatus extends Observable{
 
@@ -325,6 +327,23 @@ public class MopidyStatus extends Observable{
             return (int) (System.currentTimeMillis() - trackStartMillis);
         }else{
             return (int) timePosition;
+        }
+    }
+
+    public MopidyTlTrack findTrackInTracklist(MopidyData data){
+        boolean found = false;
+        int i=0;
+        MopidyTlTrack track = null;
+        while(!found && i<tracklist.length){
+            track = tracklist[i];
+            if (track.equals(data)){
+                found = true;
+            }
+        }
+        if (found){
+            return track;
+        }else{
+            return null;
         }
     }
 

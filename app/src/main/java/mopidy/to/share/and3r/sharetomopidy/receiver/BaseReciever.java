@@ -22,7 +22,7 @@ public abstract class BaseReciever extends ActionBarActivity {
         json.setMethod("core.playback.play");
         actions[2] = json.toString();
         Intent intent = new Intent(this, MopidyService.class);
-        intent.putExtra(MopidyService.ACTION_ARRAY_DATA, actions);
+        intent.putExtra(MopidyService.MAKE_ARRAY_DATA, actions);
         intent.setAction(MopidyService.ACTION_MAKE_ARRAY);
         startService(intent);
         finish();

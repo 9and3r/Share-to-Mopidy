@@ -33,7 +33,7 @@ public class MopidyTlTrack extends MopidyTrack implements Serializable{
         }else if (o instanceof JSONObject){
             return ((JSONObject)o).toString().equals(tl_track);
         }else{
-            return false;
+            return super.equals(o);
         }
     }
 

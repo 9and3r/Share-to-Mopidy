@@ -16,11 +16,12 @@ import android.widget.TextView;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPalleteReady;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
+import mopidy.to.share.and3r.sharetomopidy.utils.PaletteManager;
 
 
-public class OneTrackFragment extends Fragment implements OnImageAndPalleteReady {
+public class OneTrackFragment extends Fragment implements OnImageAndPaletteReady {
 
 
     private ViewGroup rootView;
@@ -46,8 +47,8 @@ public class OneTrackFragment extends Fragment implements OnImageAndPalleteReady
         track = MopidyStatus.get().getTrack(getArguments().getInt("pos"));
         if (track != null){
             init();
+            albumImageView.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
         }
-        albumImageView.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
         return rootView;
     }
 
@@ -84,13 +85,13 @@ public class OneTrackFragment extends Fragment implements OnImageAndPalleteReady
     }
 
     @Override
-    public void onImageAndPalleteReady(Bitmap bitmap, Palette palette) {
+    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
         if (bitmap != null){
             albumImageView.setImageBitmap(bitmap);
         }
 
         if (palette != null){
-            Palette.Swatch s = track.getAlbum().getPalette().getLightVibrantSwatch();
+            Palette.Swatch s = PaletteManager.getVibrantSwatch(palette);
             if (s != null){
                 rootView.setBackgroundColor(s.getRgb());
                 trackName.setTextColor(s.getTitleTextColor());

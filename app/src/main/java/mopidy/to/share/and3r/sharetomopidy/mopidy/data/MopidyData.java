@@ -28,4 +28,13 @@ public abstract class MopidyData {
     public String getSubTitle(){
         return "";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof MopidyData){
+            return ((MopidyData) o).uri.equals(uri);
+        }else{
+            return false;
+        }
+    }
 }

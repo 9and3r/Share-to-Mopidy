@@ -2,13 +2,21 @@ package mopidy.to.share.and3r.sharetomopidy;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
+import mopidy.to.share.and3r.sharetomopidy.utils.MopidyDataFetch;
+import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
 
 public class PlaybackControlManager {
@@ -22,7 +30,7 @@ public class PlaybackControlManager {
         }else{
             playJSON.setMethod("core.playback.play");
         }
-        playIntent.putExtra(MopidyService.ACTION_DATA, playJSON.toString());
+        playIntent.putExtra(MopidyService.ONE_ACTION_DATA, playJSON.toString());
         c.startService(playIntent);
     }
 
@@ -31,7 +39,7 @@ public class PlaybackControlManager {
         nextIntent.setAction(MopidyService.ACTION_ONE_ACTION);
         DefaultJSON nextJSON = new DefaultJSON();
         nextJSON.setMethod("core.playback.next");
-        nextIntent.putExtra(MopidyService.ACTION_DATA, nextJSON.toString());
+        nextIntent.putExtra(MopidyService.ONE_ACTION_DATA, nextJSON.toString());
         c.startService(nextIntent);
     }
 
@@ -40,7 +48,7 @@ public class PlaybackControlManager {
         previousIntent.setAction(MopidyService.ACTION_ONE_ACTION);
         DefaultJSON previousJSON = new DefaultJSON();
         previousJSON.setMethod("core.playback.previous");
-        previousIntent.putExtra(MopidyService.ACTION_DATA, previousJSON.toString());
+        previousIntent.putExtra(MopidyService.ONE_ACTION_DATA, previousJSON.toString());
         c.startService(previousIntent);
     }
 
@@ -54,7 +62,7 @@ public class PlaybackControlManager {
             JSONObject params = new JSONObject();
             params.put("value",!MopidyStatus.get().isSingle());
             json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
+            intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
             c.startService(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -70,7 +78,7 @@ public class PlaybackControlManager {
             JSONObject params = new JSONObject();
             params.put("value",!MopidyStatus.get().isConsume());
             json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
+            intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
             c.startService(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -86,7 +94,7 @@ public class PlaybackControlManager {
             JSONObject params = new JSONObject();
             params.put("value",!MopidyStatus.get().isRepeat());
             json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
+            intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
             c.startService(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -102,7 +110,7 @@ public class PlaybackControlManager {
             JSONObject params = new JSONObject();
             params.put("value",!MopidyStatus.get().isRandom());
             json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
+            intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
             c.startService(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -118,7 +126,7 @@ public class PlaybackControlManager {
             JSONObject params = new JSONObject();
             params.put("value",!MopidyStatus.get().isMute());
             json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
+            intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
             c.startService(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -135,7 +143,7 @@ public class PlaybackControlManager {
             JSONObject params = new JSONObject();
             params.put("time_position", value);
             json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
+            intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
             c.startService(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -152,7 +160,7 @@ public class PlaybackControlManager {
             JSONObject params = new JSONObject();
             params.put("volume",volume);
             json.put("params", params);
-            intent.putExtra(MopidyService.ACTION_DATA, json.toString());
+            intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
             c.startService(intent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -168,11 +176,45 @@ public class PlaybackControlManager {
         try {
             params.put("tl_track", new JSONObject(track.getTl_track()));
             nextJSON.put("params", params);
-            nextIntent.putExtra(MopidyService.ACTION_DATA, nextJSON.toString());
+            nextIntent.putExtra(MopidyService.ONE_ACTION_DATA, nextJSON.toString());
             c.startService(nextIntent);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static void addToTracklist(Context c, MopidyData data, boolean clear){
+        try{
+            DefaultJSON json =  new DefaultJSON();
+            String[] actions = null;
+            if (clear){
+                actions = new String[2];
+                json.setMethod("core.tracklist.clear");
+                actions[0] = json.toString();
+            }
+
+            json.setMethod("core.tracklist.add");
+            JSONObject params = new JSONObject();
+            params.put("uri", data.getUri());
+            json.put("params", params);
+
+            Intent i = new Intent(c, MopidyService.class);
+
+            if(clear){
+                actions[1] = json.toString();
+                i.setAction(MopidyService.ACTION_MAKE_ARRAY);
+                i.putExtra(MopidyService.MAKE_ARRAY_DATA, actions);
+            }else{
+                i.setAction(MopidyService.ACTION_ONE_ACTION);
+                i.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
+            }
+            c.startService(i);
+
+        }catch (JSONException e){
+
+        }
+
     }
 
     public static void playTrackListTlTrack(Context c, int pos){

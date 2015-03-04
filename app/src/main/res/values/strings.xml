@@ -52,4 +52,10 @@
 
     <string name="time">0:00</string>
 
+    <string-array name="connected_fragments_title">
+        <item>Tracklist</item>
+        <item>Playlists</item>
+        <item>Library</item>
+    </string-array>
+
 </resources>

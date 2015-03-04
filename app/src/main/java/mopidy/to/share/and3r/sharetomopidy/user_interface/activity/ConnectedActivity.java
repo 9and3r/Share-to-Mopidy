@@ -1,5 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +28,7 @@ import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListAdapter;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.NowPlayingFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.LibraryAdapter;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.PlaylistsAdapter;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.TrackListAdapter;
 
@@ -44,11 +45,14 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
     private static final int FRAGMENT_TRACKLIST = 0;
     private static final int FRAGMENT_PLAYLISTS = 1;
+    private static final int FRAGMENT_LIBRARY = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connected_layout);
+
+
 
         mPager = (ViewPager) findViewById(R.id.connected_pager);
         mPagerAdapter = new MyAdapter(getSupportFragmentManager());
@@ -58,6 +62,7 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
         nowPlayingFragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.now_playing_fragment);
         slidingUpPanelLayout.setPanelSlideListener(nowPlayingFragment);
         nowPlayingFragment.setSlidingPanel(slidingUpPanelLayout);
+
 
         //connectedPager = findViewById(R.id.connected_content);
         mPager.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
@@ -125,7 +130,10 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
         if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
-            super.onBackPressed();
+            ConnectedBaseFragment f = getCurrentFragment();
+            if (!f.getmAdapter().onBackPressed(this)){
+                super.onBackPressed();
+            }
         }
 
     }
@@ -157,37 +165,62 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
         }
     }
 
-    public static class MyAdapter extends FragmentPagerAdapter {
+    private ConnectedBaseFragment getCurrentFragment(){
+        return (ConnectedBaseFragment) getSupportFragmentManager().findFragmentByTag(getFragmentTag(mPager.getCurrentItem()));
+    }
+
+    private String getFragmentTag(int fragmentPosition){
+        return "android:switcher:" + mPager.getId() + ":" + fragmentPosition;
+    }
+
+
+
+    public class MyAdapter extends FragmentPagerAdapter {
+
+        private String[] titles;
+
         public MyAdapter(FragmentManager fm) {
             super(fm);
+            titles = getResources().getStringArray(R.array.connected_fragments_title);
+
         }
+
+
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public Fragment getItem(int position) {
-            return ArrayListFragment.newInstance(position);
+            return ConnectedBaseFragment.newInstance(position);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
         }
     }
 
-    public static class ArrayListFragment extends Fragment {
+    public static class ConnectedBaseFragment extends Fragment {
         int pos;
         private RecyclerView mRecyclerView;
         private LinearLayoutManager mLayoutManager;
+
+        public BaseListAdapter getmAdapter() {
+            return mAdapter;
+        }
+
         private BaseListAdapter mAdapter;
 
 
-        static ArrayListFragment newInstance(int num) {
-            ArrayListFragment f = new ArrayListFragment();
-
+        static ConnectedBaseFragment newInstance(int num) {
+            ConnectedBaseFragment f = new ConnectedBaseFragment();
             // Supply num input as an argument.
             Bundle args = new Bundle();
             args.putInt("num", num);
             f.setArguments(args);
-
             return f;
         }
 
@@ -214,6 +247,9 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
                     break;
                 case FRAGMENT_PLAYLISTS:
                     mAdapter = new PlaylistsAdapter();
+                    break;
+                case FRAGMENT_LIBRARY:
+                    mAdapter = new LibraryAdapter(root.getContext());
                     break;
             }
             mRecyclerView.setAdapter(mAdapter);

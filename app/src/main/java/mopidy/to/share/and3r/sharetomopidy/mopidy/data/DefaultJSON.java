@@ -19,6 +19,18 @@ public class DefaultJSON extends JSONObject {
         }
     }
 
+    public DefaultJSON(int pId){
+        try {
+            put("jsonrpc","2.0");
+            put("id", pId);
+            put("params", new JSONObject());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     public void setMethod(String pMethod){
         try {
             put("method",pMethod);
