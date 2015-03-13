@@ -1,5 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyPlaylist;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
@@ -18,7 +22,7 @@ import mopidy.to.share.and3r.sharetomopidy.utils.MopidyDataFetch;
 import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
 
-public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListener {
+public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListener, Observer {
 
 
 
@@ -40,6 +44,18 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
         }else{
             super.onClick(v, item);
         }
+    }
+
+    @Override
+    public void onResume(Activity pActivity) {
+        super.onResume(pActivity);
+        MopidyStatus.get().addObserver(this);
+    }
+
+    @Override
+    public void onPause() {
+        MopidyStatus.get().deleteObserver(this);
+        super.onPause();
     }
 
 
@@ -77,4 +93,21 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
     }
 
 
+    @Override
+    public void update(Observable observable, Object data) {
+        int event = (int) data;
+        switch (event){
+            case MopidyStatus.EVENT_PLAYLISTS_CHANGED:
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (currentPath.size() == 0){
+                            list = MopidyStatus.get().getPlaylists();
+                            onDataChanged();
+                        }
+                    }
+                });
+                break;
+        }
+    }
 }

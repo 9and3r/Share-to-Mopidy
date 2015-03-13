@@ -7,7 +7,8 @@
         android:id="@+id/small_now_playing"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary_dark">
+        android:background="@color/primary_dark"
+        android:elevation="16dp">
 
         <ImageView
             android:layout_width="?attr/actionBarSize"
@@ -18,7 +19,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:src="@drawable/no_album" />
+            android:src="@drawable/no_album"/>
 
         <TextView
             android:layout_width="wrap_content"

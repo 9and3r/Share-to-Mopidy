@@ -3,6 +3,7 @@ package mopidy.to.share.and3r.sharetomopidy.user_interface.fragments;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,6 +126,9 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
 
     private SlidingUpPanelLayout slidingPanel;
 
+    private float smallNowPlayingElevation;
+    private float actionBarElevation;
+
 
     @Nullable
     @Override
@@ -157,6 +162,10 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         nowPlayingContentBig.getViewTreeObserver().addOnGlobalLayoutListener(playingBigContentListener);
 
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            smallNowPlayingElevation = smallNowPlaying.getElevation();
+            actionBarElevation = ((ConnectedActivity)getActivity()).getSupportActionBar().getElevation();
+        }
 
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -255,31 +264,16 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         return rootView;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("PANEL_STATE", slidingPanel.getPanelState());
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null){
-            panelState = (SlidingUpPanelLayout.PanelState) savedInstanceState.getSerializable("PANEL_STATE");
-        }
-    }
-
     private ViewTreeObserver.OnGlobalLayoutListener playingBigContentListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         public void onGlobalLayout() {
             nowPlayingContentBig.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             nowPlayingContentBigHeight = rootView.getHeight() - smallNowPlaying.getHeight();
             anchorPoint = (float)playBackControlsHeight / (float)nowPlayingContentBigHeight;
             slidingPanel.setAnchorPoint(anchorPoint);
-            if (panelState != null){
-                slidingPanel.setPanelState(panelState);
-            }
         }
     };
+
+
 
 
 
@@ -434,17 +428,6 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void update(Observable observable, Object data) {
         final int event = (int) data;
@@ -516,9 +499,6 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
     public void onPanelSlide(View view, float v) {
 
 
-
-
-
         float alpha = 0;
         if (v < 1.0f) {
             alpha = (1-v/anchorPoint);
@@ -535,6 +515,20 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         smallNextButton.setAlpha(alpha);
         smallPlayPauseButton.setAlpha(alpha);
 
+        ConnectedActivity activity = (ConnectedActivity) getActivity();
+
+        //Elevation
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (anchorPoint < v){
+                float pos = (v-anchorPoint)/(1-anchorPoint);
+                smallNowPlaying.setElevation(pos*smallNowPlayingElevation);
+                activity.getSupportActionBar().setElevation((1-pos)*actionBarElevation);
+            }else{
+                smallNowPlaying.setElevation(0);
+                activity.getSupportActionBar().setElevation(actionBarElevation);
+            }
+        }
+
 
         LinearLayout.LayoutParams paramsBig = (LinearLayout.LayoutParams) nowPlayingContentBig.getLayoutParams();
         paramsBig.height = (int) (v * (nowPlayingContentBigHeight));
@@ -546,7 +540,8 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
                 new int[] { android.R.attr.actionBarSize });
 
 
-        ConnectedActivity activity = (ConnectedActivity) getActivity();
+
+
         int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
         styledAttributes.recycle();
 
@@ -566,26 +561,29 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
 
 
 
-        float changePoint = (float) (connectedContentLayoutHeight - mActionBarSize)/ (float) connectedContentLayoutHeight;
+        float changePoint = (float) connectedContentLayoutHeight/ (float) (connectedContentLayoutHeight + mActionBarSize);
         int offset = 0;
         if (v > changePoint){
             offset = (int)((v-changePoint)/(1-changePoint) * activity.getSupportActionBar().getHeight());
         }
         activity.getSupportActionBar().setHideOffset(offset);
+
+
     }
 
     @Override
     public void onPanelCollapsed(View view) {
-        onPanelSlide(slidingPanel, 0);
+        Log.d("Proba","Panel Collapsed");
     }
 
     @Override
     public void onPanelExpanded(View view) {
-        onPanelSlide(slidingPanel, 1.0f);
+        Log.d("Proba","Panel Expanded");
     }
 
     @Override
     public void onPanelAnchored(View view) {
+        Log.d("Proba","Panel Anchored");
         smallNextButton.setVisibility(View.GONE);
         smallPlayPauseButton.setVisibility(View.GONE);
         onPanelSlide(slidingPanel, anchorPoint);

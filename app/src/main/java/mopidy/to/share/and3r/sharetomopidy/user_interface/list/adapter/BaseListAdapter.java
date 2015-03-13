@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nineoldandroids.view.ViewHelper;
 
@@ -25,7 +26,7 @@ import mopidy.to.share.and3r.sharetomopidy.user_interface.ListItemHolderImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.ListItemHolderNoImage;
 
 
-public abstract class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
+public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
 
     private static final int VIEW_TYPE_IMAGE = 1;
     private static final int VIEW_TYPE_NO_IMAGE = 2;
@@ -109,6 +110,8 @@ public abstract class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
 
     public void onClick(View v, int item){
         PlaybackControlManager.addToTracklist(v.getContext(), list[item], false);
+        Toast toast = Toast.makeText(v.getContext(), v.getContext().getString(R.string.added_to_tracklist), Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     public void setStatus(int pStatus){
@@ -116,7 +119,10 @@ public abstract class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
         notifyDataSetChanged();
     }
 
-
+    public void setList(MopidyData[] newList){
+        list = newList;
+        setStatus(LOADED);
+    }
 
     public void onDataChanged(){
         notifyDataSetChanged();

@@ -168,6 +168,15 @@ public class MopidyConnection {
                     MopidyStatus.get().setMute(object.getBoolean("mute"));
                 }else if (event.equals("volume_changed")){
                     MopidyStatus.get().setVolume(object.getInt("volume"));
+                }else if (event.equals("playlists_loaded")){
+                    DefaultJSON action2 = new DefaultJSON();
+                    action2.put("id",12);
+                    action2.setMethod("core.playlists.get_playlists");
+                    JSONObject params = new JSONObject();
+                    params.put("include_tracks", false);
+                    action2.put("params", params);
+                    actionsNoReturn.addLast(action2.toString());
+                    makeAction();
                 }
             }else if (object.has("id") && !object.isNull("id")){
                 int id = object.getInt("id");

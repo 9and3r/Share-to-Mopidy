@@ -56,6 +56,9 @@
         <item>Tracklist</item>
         <item>Playlists</item>
         <item>Library</item>
+        <item>Search</item>
     </string-array>
+
+    <string name="added_to_tracklist">Added to tracklist</string>
 
 </resources>

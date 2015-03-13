@@ -26,6 +26,9 @@ import java.util.Observer;
 import mopidy.to.share.and3r.sharetomopidy.MopidyService;
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.ConnectedBaseFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.RecyclerViewBaseFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.SearchFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListAdapter;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.NowPlayingFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.LibraryAdapter;
@@ -43,9 +46,7 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
     //private View connectedPager;
 
 
-    private static final int FRAGMENT_TRACKLIST = 0;
-    private static final int FRAGMENT_PLAYLISTS = 1;
-    private static final int FRAGMENT_LIBRARY = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +56,21 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
 
         mPager = (ViewPager) findViewById(R.id.connected_pager);
+        mPager.setOffscreenPageLimit(2);
         mPagerAdapter = new MyAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
         slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         nowPlayingFragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.now_playing_fragment);
-        slidingUpPanelLayout.setPanelSlideListener(nowPlayingFragment);
+
         nowPlayingFragment.setSlidingPanel(slidingUpPanelLayout);
+        slidingUpPanelLayout.setPanelSlideListener(nowPlayingFragment);
 
 
         //connectedPager = findViewById(R.id.connected_content);
         mPager.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
+
+        //getSupportActionBar().setElevation(0);
 
 
     }
@@ -131,7 +136,7 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
             ConnectedBaseFragment f = getCurrentFragment();
-            if (!f.getmAdapter().onBackPressed(this)){
+            if (!f.onBackPressed(this)){
                 super.onBackPressed();
             }
         }
@@ -185,8 +190,6 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
         }
 
-
-
         @Override
         public int getCount() {
             return 3;
@@ -194,7 +197,11 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
         @Override
         public Fragment getItem(int position) {
-            return ConnectedBaseFragment.newInstance(position);
+            if (position == ConnectedBaseFragment.FRAGMENT_SEARCH){
+                return new SearchFragment();
+            }else{
+                return RecyclerViewBaseFragment.newInstance(position);
+            }
         }
 
         @Override
@@ -203,73 +210,4 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
         }
     }
 
-    public static class ConnectedBaseFragment extends Fragment {
-        int pos;
-        private RecyclerView mRecyclerView;
-        private LinearLayoutManager mLayoutManager;
-
-        public BaseListAdapter getmAdapter() {
-            return mAdapter;
-        }
-
-        private BaseListAdapter mAdapter;
-
-
-        static ConnectedBaseFragment newInstance(int num) {
-            ConnectedBaseFragment f = new ConnectedBaseFragment();
-            // Supply num input as an argument.
-            Bundle args = new Bundle();
-            args.putInt("num", num);
-            f.setArguments(args);
-            return f;
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            pos = getArguments() != null ? getArguments().getInt("num") : 1;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View root = inflater.inflate(R.layout.recycler_layout, container, false);
-
-
-            mRecyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
-            mRecyclerView.setHasFixedSize(true);
-
-            mLayoutManager = new LinearLayoutManager(getActivity());
-            mRecyclerView.setLayoutManager(mLayoutManager);
-
-            switch (pos){
-                case FRAGMENT_TRACKLIST:
-                    mAdapter = new TrackListAdapter();
-                    break;
-                case FRAGMENT_PLAYLISTS:
-                    mAdapter = new PlaylistsAdapter();
-                    break;
-                case FRAGMENT_LIBRARY:
-                    mAdapter = new LibraryAdapter(root.getContext());
-                    break;
-            }
-            mRecyclerView.setAdapter(mAdapter);
-            return root;
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            if (mAdapter != null){
-                mAdapter.onResume(getActivity());
-            }
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            if (mAdapter != null) {
-                mAdapter.onPause();
-            }
-        }
-    }
 }

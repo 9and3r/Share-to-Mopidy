@@ -19,7 +19,10 @@
 
         </activity>
 
-        <activity android:name=".user_interface.activity.ConnectedActivity"></activity>
+        <activity android:name=".user_interface.activity.ConnectedActivity"
+            android:windowSoftInputMode="adjustNothing">
+
+        </activity>
 
 
 
