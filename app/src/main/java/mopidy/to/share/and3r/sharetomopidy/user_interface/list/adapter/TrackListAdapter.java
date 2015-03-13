@@ -1,6 +1,7 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
 import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
 import org.json.JSONException;
@@ -41,7 +42,7 @@ public class TrackListAdapter extends BaseListAdapter implements Observer{
     }
 
     @Override
-    public void onResume(Activity pActivity) {
+    public void onResume(ActionBarActivity pActivity) {
         super.onResume(pActivity);
         MopidyStatus.get().addObserver(this);
     }

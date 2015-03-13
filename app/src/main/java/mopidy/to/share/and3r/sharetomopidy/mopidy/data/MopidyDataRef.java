@@ -3,7 +3,9 @@ package mopidy.to.share.and3r.sharetomopidy.mopidy.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MopidyDataRef extends MopidyData {
+import java.io.Serializable;
+
+public class MopidyDataRef extends MopidyData implements Serializable{
 
     public static final String TYPE_TRACK = "track";
     public static final String TYPE_DIRECTORY = "directory";

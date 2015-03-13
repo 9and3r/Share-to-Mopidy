@@ -2,8 +2,10 @@ package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import mopidy.to.share.and3r.sharetomopidy.user_interface.BaseHolder;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.BaseListItem;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.ListItemHolderImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.ListItemHolderNoImage;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.MopidyDataOptionsDialog;
 
 
 public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
@@ -41,7 +44,7 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
     private int status;
     protected Handler h;
 
-    protected Activity activity;
+    protected ActionBarActivity activity;
 
     public BaseListAdapter(){
         status = LOADED;
@@ -114,6 +117,14 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
         toast.show();
     }
 
+    public void onLongClick(View v, int item){
+        MopidyDataOptionsDialog dialog = new MopidyDataOptionsDialog();
+        Bundle b = new Bundle();
+        b.putSerializable(MopidyDataOptionsDialog.MOPIDY_DATA, list[item]);
+        dialog.setArguments(b);
+        dialog.show(activity.getSupportFragmentManager(), "DIALOG_OPTIONS");
+    }
+
     public void setStatus(int pStatus){
         status = pStatus;
         notifyDataSetChanged();
@@ -128,7 +139,7 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
         notifyDataSetChanged();
     }
 
-    public void onResume(Activity pActivity){
+    public void onResume(ActionBarActivity pActivity){
         activity = pActivity;
     }
 

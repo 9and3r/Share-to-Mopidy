@@ -31,6 +31,20 @@ public abstract class BaseListItem extends BaseHolder{
                 adapter.onClick(v, pos);
             }
         });
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                adapter.onLongClick(v, pos);
+                return true;
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.onLongClick(v, pos);
+            }
+        });
     }
 
 

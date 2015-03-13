@@ -3,10 +3,12 @@ package mopidy.to.share.and3r.sharetomopidy.mopidy.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by ander on 2/26/15.
  */
-public abstract class MopidyData {
+public abstract class MopidyData implements Serializable{
 
     private String uri;
 

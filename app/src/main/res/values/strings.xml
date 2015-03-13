@@ -61,4 +61,9 @@
 
     <string name="added_to_tracklist">Added to tracklist</string>
 
+    <string-array name="mopidy_data_options">
+        <item>Add to tracklist</item>
+        <item>Replace tracklist</item>
+    </string-array>
+
 </resources>

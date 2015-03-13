@@ -3,8 +3,10 @@ package mopidy.to.share.and3r.sharetomopidy.mopidy.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 
-public class MopidyTrack extends MopidyDataWithImage {
+
+public class MopidyTrack extends MopidyDataWithImage implements Serializable{
 
     private String trackString;
     private MopidyAlbum album;

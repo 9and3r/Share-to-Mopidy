@@ -4,7 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MopidyPlaylist extends MopidyData {
+import java.io.Serializable;
+
+public class MopidyPlaylist extends MopidyData implements Serializable{
 
     private String name;
     private MopidyTrack[] tracks;

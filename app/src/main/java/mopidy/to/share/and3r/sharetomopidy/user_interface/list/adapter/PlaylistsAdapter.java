@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -47,7 +48,7 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
     }
 
     @Override
-    public void onResume(Activity pActivity) {
+    public void onResume(ActionBarActivity pActivity) {
         super.onResume(pActivity);
         MopidyStatus.get().addObserver(this);
     }

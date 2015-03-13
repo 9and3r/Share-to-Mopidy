@@ -1,8 +1,10 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.fragments;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -92,7 +94,7 @@ public class RecyclerViewBaseFragment extends ConnectedBaseFragment{
     public void onResume() {
         super.onResume();
         if (mAdapter != null){
-            mAdapter.onResume(getActivity());
+            mAdapter.onResume((ActionBarActivity)getActivity());
         }
     }
 

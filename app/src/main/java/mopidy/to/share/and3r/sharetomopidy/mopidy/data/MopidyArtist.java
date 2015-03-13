@@ -3,10 +3,10 @@ package mopidy.to.share.and3r.sharetomopidy.mopidy.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 
 
-
-public class MopidyArtist extends MopidyData{
+public class MopidyArtist extends MopidyData implements Serializable{
 
     private String artistName;
 
