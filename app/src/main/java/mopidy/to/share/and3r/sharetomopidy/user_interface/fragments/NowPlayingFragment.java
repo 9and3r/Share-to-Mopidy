@@ -33,6 +33,7 @@ import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.activity.ConnectedActivity;
@@ -337,50 +338,46 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         smallArtistName.setText(MopidyStatus.get().getCurrentArtistsName());
         MopidyTlTrack track = MopidyStatus.get().getCurrentTrack();
 
-        //TODO Gaizki dago
-        boolean loadNewAlbumArt = false;
-        if (track != null){
-            if (previousAlbum != null){
-                if (track.getAlbum() != null){
-                    if(!previousAlbum.equals(track.getAlbum())){
-                        if (taskImage != null && !taskImage.isCancelled()){
-                            taskImage.cancel(true);
-                            taskImage = null;
-                        }
-                    }
-                    loadNewAlbumArt = true;
-                }else{
-                    loadNewAlbumArt = false;
-                }
-            }else{
-                loadNewAlbumArt = (track.getAlbum() != null);
-            }
-        }else{
-            loadNewAlbumArt = false;
-        }
-        if (loadNewAlbumArt){
-            previousAlbum = MopidyStatus.get().getCurrentTrack().getAlbum();
-                TaskImage task = new TaskImage(new OnImageAndPaletteReady() {
-                    @Override
-                    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
-                        smallAlbumArt.setImageBitmap(bitmap);
-                        taskImage = null;
-                        if (palette != null) {
-                            Palette.Swatch s = PaletteManager.getVibrantDarkSwatch(palette);
-                            if (s != null) {
-                                smallNowPlaying.setBackgroundColor(s.getRgb());
-                                playBackControls.setBackgroundColor(s.getRgb());
-                                smallTrackName.setTextColor(s.getTitleTextColor());
-                                smallArtistName.setTextColor(s.getBodyTextColor());
-                            }
-                        }
-                    }
-                } , previousAlbum, smallNowPlayingHeight, smallNowPlayingHeight);
-                task.execute(getActivity());
-        }else{
+        if (!isSameAlbumPrevious(track)){
             smallAlbumArt.setImageResource(R.drawable.no_album);
-            previousAlbum = null;
+            previousAlbum = MopidyStatus.get().getCurrentTrack().getAlbum();
+
+            //Cancel previous load
+            if (taskImage != null && !taskImage.isCancelled()){
+                taskImage.cancel(true);
+            }
+
+            // Load new Image
+            TaskImage task = new TaskImage(new OnImageAndPaletteReady() {
+                @Override
+                public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
+                    smallAlbumArt.setImageBitmap(bitmap);
+                    taskImage = null;
+                    if (palette != null) {
+                        Palette.Swatch s = PaletteManager.getVibrantDarkSwatch(palette);
+                        if (s != null) {
+                            smallNowPlaying.setBackgroundColor(s.getRgb());
+                            playBackControls.setBackgroundColor(s.getRgb());
+                            smallTrackName.setTextColor(s.getTitleTextColor());
+                            smallArtistName.setTextColor(s.getBodyTextColor());
+                        }
+                    }
+                }
+            } , previousAlbum, smallNowPlayingHeight, smallNowPlayingHeight);
+            task.execute(getActivity());
+
         }
+    }
+
+    private boolean isSameAlbumPrevious(MopidyTrack track){
+        if (previousAlbum != null){
+            if (track != null){
+                if (track.getAlbum() != null){
+                    return previousAlbum.equals(track.getAlbum());
+                }
+            }
+        }
+        return false;
     }
 
     public void onSingleChanged(){
