@@ -339,32 +339,42 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         MopidyTlTrack track = MopidyStatus.get().getCurrentTrack();
 
         if (!isSameAlbumPrevious(track)){
+
             smallAlbumArt.setImageResource(R.drawable.no_album);
-            previousAlbum = MopidyStatus.get().getCurrentTrack().getAlbum();
+
+            if (track != null){
+                previousAlbum = MopidyStatus.get().getCurrentTrack().getAlbum();
+            }else{
+                previousAlbum = null;
+            }
+
 
             //Cancel previous load
             if (taskImage != null && !taskImage.isCancelled()){
                 taskImage.cancel(true);
             }
 
-            // Load new Image
-            TaskImage task = new TaskImage(new OnImageAndPaletteReady() {
-                @Override
-                public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
-                    smallAlbumArt.setImageBitmap(bitmap);
-                    taskImage = null;
-                    if (palette != null) {
-                        Palette.Swatch s = PaletteManager.getVibrantDarkSwatch(palette);
-                        if (s != null) {
-                            smallNowPlaying.setBackgroundColor(s.getRgb());
-                            playBackControls.setBackgroundColor(s.getRgb());
-                            smallTrackName.setTextColor(s.getTitleTextColor());
-                            smallArtistName.setTextColor(s.getBodyTextColor());
+            if (previousAlbum != null){
+                // Load new Image
+                TaskImage task = new TaskImage(new OnImageAndPaletteReady() {
+                    @Override
+                    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
+                        smallAlbumArt.setImageBitmap(bitmap);
+                        taskImage = null;
+                        if (palette != null) {
+                            Palette.Swatch s = PaletteManager.getVibrantDarkSwatch(palette);
+                            if (s != null) {
+                                smallNowPlaying.setBackgroundColor(s.getRgb());
+                                playBackControls.setBackgroundColor(s.getRgb());
+                                smallTrackName.setTextColor(s.getTitleTextColor());
+                                smallArtistName.setTextColor(s.getBodyTextColor());
+                            }
                         }
                     }
-                }
-            } , previousAlbum, smallNowPlayingHeight, smallNowPlayingHeight);
-            task.execute(getActivity());
+                } , previousAlbum, smallNowPlayingHeight, smallNowPlayingHeight);
+                task.execute(getActivity());
+            }
+
 
         }
     }

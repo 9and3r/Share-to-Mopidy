@@ -364,6 +364,10 @@ public class MopidyService extends Service implements Observer {
         MopidyConnection.get().stop();
         AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         am.abandonAudioFocus(audioFocusManager);
+        if (mRemoteControlClient != null){
+            mRemoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
+        }
+
 
         stopForeground(true);
         stopSelf();
