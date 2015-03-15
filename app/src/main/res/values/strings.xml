@@ -48,7 +48,7 @@
     <string name="configuration_error">The test failed :(\n There was a problem connecting to mopidy:</string>
 
     <string name="about">About</string>
-    <string name="about_message">This app uses the following libraries:\n\nhttps://github.com/koush/AndroidAsync\n\n\nAnd of course this app would not be here without https://www.mopidy.com</string>
+    <string name="about_message">This app uses the following libraries:\n\nhttps://github.com/koush/AndroidAsync\n\nImages from http://www.last.fm/api\n\nAnd of course this app would not be here without https://www.mopidy.com</string>
 
     <string name="time">0:00</string>
 

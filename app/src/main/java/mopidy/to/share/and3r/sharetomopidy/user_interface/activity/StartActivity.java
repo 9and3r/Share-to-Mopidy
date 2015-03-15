@@ -6,9 +6,7 @@ import android.os.Bundle;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 
-/**
- * Created by ander on 2/25/15.
- */
+
 public class StartActivity extends Activity {
 
     @Override
