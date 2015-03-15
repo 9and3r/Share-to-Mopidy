@@ -1,21 +1,17 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
-import android.app.Activity;
+import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Observable;
 import java.util.Observer;
 
-import mopidy.to.share.and3r.sharetomopidy.MopidyService;
 import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListAdapter;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.MopidyDataOptionsDialog;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.TracklistTlTrackOptionsDialog;
 
 
 public class TrackListAdapter extends BaseListAdapter implements Observer{
@@ -23,7 +19,6 @@ public class TrackListAdapter extends BaseListAdapter implements Observer{
 
     public TrackListAdapter(){
         list = MopidyStatus.get().getTracklist();
-        setHasStableIds(true);
     }
 
     public void onDataChanged(){
@@ -32,13 +27,16 @@ public class TrackListAdapter extends BaseListAdapter implements Observer{
     }
 
     @Override
-    public long getItemId(int position) {
-        return ((MopidyTlTrack) list[position]).getId();
-    }
-
-    @Override
     public void onClick(View v, int item) {
         PlaybackControlManager.playTrackListTlTrack(v.getContext(), (MopidyTlTrack)list[item]);
+    }
+
+    public void onLongClick(View v, int item){
+        TracklistTlTrackOptionsDialog dialog = new TracklistTlTrackOptionsDialog();
+        Bundle b = new Bundle();
+        b.putSerializable(MopidyDataOptionsDialog.MOPIDY_DATA, list[item]);
+        dialog.setArguments(b);
+        dialog.show(activity.getSupportFragmentManager(), "DIALOG_TL_TRACK_OPTIONS");
     }
 
     @Override

@@ -48,7 +48,7 @@
     <string name="configuration_error">The test failed :(\n There was a problem connecting to mopidy:</string>
 
     <string name="about">About</string>
-    <string name="about_message">This app uses the following libraries:\n\nhttps://github.com/koush/AndroidAsync\n\nhttps://github.com/nostra13/Android-Universal-Image-Loader\n\nAnd of course this app would not be here without https://www.mopidy.com</string>
+    <string name="about_message">This app uses the following libraries:\n\nhttps://github.com/koush/AndroidAsync\n\n\nAnd of course this app would not be here without https://www.mopidy.com</string>
 
     <string name="time">0:00</string>
 
@@ -64,6 +64,10 @@
     <string-array name="mopidy_data_options">
         <item>Add to tracklist</item>
         <item>Replace tracklist</item>
+    </string-array>
+
+    <string-array name="tracklist_tltrack_options">
+        <item>Remove from tracklist</item>
     </string-array>
 
 </resources>

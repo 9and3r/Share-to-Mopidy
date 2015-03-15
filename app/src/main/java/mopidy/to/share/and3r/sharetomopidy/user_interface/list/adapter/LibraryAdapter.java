@@ -1,6 +1,7 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -10,6 +11,8 @@ import org.json.JSONObject;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyDataRef;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.MopidyDataOptionsDialog;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.TracklistTlTrackOptionsDialog;
 import mopidy.to.share.and3r.sharetomopidy.utils.MopidyDataFetch;
 import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
@@ -29,8 +32,9 @@ public class LibraryAdapter extends BaseListAdapter implements OnRequestListener
         }else{
             super.onClick(v, item);
         }
-
     }
+
+
 
     @Override
     public void loadPath(Context c) {

@@ -1,5 +1,7 @@
 package mopidy.to.share.and3r.sharetomopidy.mopidy.data;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,7 +39,14 @@ public class MopidyTlTrack extends MopidyTrack implements Serializable{
         }
     }
 
-    public int getId(){
+    @Override
+    public String toString() {
+        return tl_track.toString();
+    }
+
+    public int getTlId(){
         return tlid;
     }
+
+
 }

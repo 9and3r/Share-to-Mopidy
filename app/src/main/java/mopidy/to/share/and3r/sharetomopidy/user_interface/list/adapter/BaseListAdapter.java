@@ -97,6 +97,7 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
 
     }
 
+
     @Override
     public int getItemViewType(int position) {
         if (status == LOADED){
@@ -146,6 +147,7 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
     public void onPause(){
         activity = null;
     }
+
 
     public boolean onBackPressed(Context c){
         if (currentPath.size() == 0){

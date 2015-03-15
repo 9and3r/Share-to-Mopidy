@@ -2,21 +2,15 @@ package mopidy.to.share.and3r.sharetomopidy;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Observable;
-import java.util.Observer;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
-import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
-import mopidy.to.share.and3r.sharetomopidy.utils.MopidyDataFetch;
-import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
 
 public class PlaybackControlManager {
@@ -171,7 +165,7 @@ public class PlaybackControlManager {
         Intent nextIntent = new Intent(c, MopidyService.class);
         nextIntent.setAction(MopidyService.ACTION_ONE_ACTION);
         DefaultJSON nextJSON = new DefaultJSON();
-        nextJSON.setMethod("core.playback.change_track");
+        nextJSON.setMethod("core.playback.play");
         JSONObject params = new JSONObject();
         try {
             params.put("tl_track", new JSONObject(track.getTl_track()));
@@ -215,6 +209,31 @@ public class PlaybackControlManager {
 
         }
 
+    }
+
+    public static void removeTlTrackFromTracklist(Context c, MopidyTlTrack track){
+        try{
+            DefaultJSON json = new DefaultJSON();
+            JSONObject params = new JSONObject();
+            JSONObject criteria = new JSONObject();
+            JSONArray tlid = new JSONArray();
+            JSONArray uri = new JSONArray();
+            tlid.put(track.getTlId());
+            criteria.put("tlid",tlid );
+            uri.put(track.getUri());
+            criteria.put("uri", uri);
+            params.put("criteria", criteria);
+            json.put("params", params);
+            json.setMethod("core.tracklist.remove");
+
+            Intent i = new Intent(c, MopidyService.class);
+            i.setAction(MopidyService.ACTION_ONE_ACTION);
+            i.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
+            c.startService(i);
+
+        }catch (JSONException e){
+
+        }
     }
 
     public static void playTrackListTlTrack(Context c, int pos){

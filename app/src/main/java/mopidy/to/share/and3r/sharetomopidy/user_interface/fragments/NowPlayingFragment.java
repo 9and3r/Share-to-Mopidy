@@ -271,6 +271,11 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
             nowPlayingContentBigHeight = rootView.getHeight() - smallNowPlaying.getHeight();
             anchorPoint = (float)playBackControlsHeight / (float)nowPlayingContentBigHeight;
             slidingPanel.setAnchorPoint(anchorPoint);
+            if (slidingPanel.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED){
+                onPanelSlide(slidingPanel, 0);
+            }else{
+                onPanelSlide(slidingPanel, 1);
+            }
         }
     };
 
@@ -580,17 +585,14 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
 
     @Override
     public void onPanelCollapsed(View view) {
-        Log.d("Proba","Panel Collapsed");
     }
 
     @Override
     public void onPanelExpanded(View view) {
-        Log.d("Proba","Panel Expanded");
     }
 
     @Override
     public void onPanelAnchored(View view) {
-        Log.d("Proba","Panel Anchored");
         smallNextButton.setVisibility(View.GONE);
         smallPlayPauseButton.setVisibility(View.GONE);
         onPanelSlide(slidingPanel, anchorPoint);
