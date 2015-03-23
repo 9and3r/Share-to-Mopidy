@@ -46,7 +46,7 @@ public class MopidyService extends Service implements Observer {
     public static final String ONE_ACTION_DATA ="ONE_ACTION_DATA";
     public static final String ACTION_ONE_ACTION="ACTION_ONE_ACTION";
 
-    public static final String CONFIG_ID="CONFIG_ID";
+
     public static final int NOTIFICATION_ID=1;
     public static final int NOTIFICATION_ID_ERROR=2;
     private RemoteControlClient mRemoteControlClient;
@@ -60,12 +60,7 @@ public class MopidyService extends Service implements Observer {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MopidyServerConfig config;
-        if(intent!=null && intent.hasExtra(CONFIG_ID)){
-            config = MopidyServerConfigManager.get().getConfig(getApplicationContext(), intent.getIntExtra(CONFIG_ID, 0), true);
-        }else{
-            config = MopidyServerConfigManager.get().getCurrentServer(getApplicationContext());
-        }
+        MopidyServerConfig config = MopidyServerConfigManager.get().getCurrentServer(getApplicationContext());
         if (intent == null || intent.getAction() == ACTION_CONNECT){
             startConnection(config);
         }else if (intent.getAction() == ACTION_STOP_SERVICE){
@@ -122,7 +117,7 @@ public class MopidyService extends Service implements Observer {
     }
 
     private void startConnection(MopidyServerConfig config){
-        if (MopidyStatus.get().getConnectionStatus() != MopidyStatus.CONNECTED){
+        if (MopidyStatus.get().getConnectionStatus() != MopidyStatus.CONNECTED && config != null){
             MopidyStatus.get().addObserver(this);
             MopidyConnection.get().connect(config.getIp(),config.getPort());
 

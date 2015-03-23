@@ -15,7 +15,8 @@ public class MopidyServerConfigManager extends Observable{
 
 
     private ArrayList<MopidyServerConfig> configs;
-    private int currentID;
+    private ArrayList<MopidyServerConfig> configsNoSave;
+    private MopidyServerConfig currentServer;
 
     private static final String MY_SERVERS = "SERVERS_CONFIG";
     private static final String SERVER= "SERVER_";
@@ -37,39 +38,55 @@ public class MopidyServerConfigManager extends Observable{
         int size = p.getInt(SERVER_COUNT, 0);
         MopidyServerConfig config;
         configs = new ArrayList<>();
+        configsNoSave = new ArrayList<>();
         for (int i=0; i<size; i++){
             config = new MopidyServerConfig(p.getString(SERVER+String.valueOf(i), "{}"));
             configs.add(i , config);
         }
-        currentID = p.getInt(CURRENT_SERVER, 0);
+        int currentServerPos = p.getInt(CURRENT_SERVER, 0);
+        if (currentServerPos < configs.size()){
+            currentServer = configs.get(currentServerPos);
+        }
     }
 
-    public MopidyServerConfig getConfig(Context c, int pID, boolean setCurrent){
-        if (setCurrent){
-            setCurrentID(c, pID);
+    public void setCurrentServer(Context c, MopidyServerConfig currentServer) {
+        this.currentServer = currentServer;
+        if (currentServer.getId() > -1){
+            setCurrentID(c, currentServer.getId());
         }
-        return configs.get(pID);
+    }
+
+    public MopidyServerConfig getConfig(Context c, int pID){
+        if (pID < configs.size()){
+            return configs.get(pID);
+        }else{
+            return configsNoSave.get(pID-configs.size());
+        }
     }
 
     public MopidyServerConfig getCurrentServer(Context c){
-        if (configs.size() == 0){
-            createNewMopidyServer(c);
-            return configs.get(0);
-        }else{
-            if (currentID < configs.size()){
-                return configs.get(currentID);
-            }else{
-                return configs.get(0);
-            }
-        }
+        return currentServer;
     }
 
     public void saveMopidyServer(Context c, MopidyServerConfig config){
         SharedPreferences p = c.getSharedPreferences(MY_SERVERS, Context.MODE_PRIVATE);
         config.setId(configs.indexOf(config));
-        p.edit().putString(SERVER+String.valueOf(config.getId()), config.toString()).putInt(SERVER_COUNT, configs.size()).commit();
+        p.edit().putString(SERVER+String.valueOf(config.getId()), config.toString())
+                .commit();
+        saveServerCount(c);
         setChanged();
         notifyObservers();
+    }
+
+    private void saveServerCount(Context c){
+        SharedPreferences p = c.getSharedPreferences(MY_SERVERS, Context.MODE_PRIVATE);
+        p.edit().putInt(SERVER_COUNT, configs.size()).commit();
+    }
+
+    public void saveServer(Context c, MopidyServerConfig config){
+        configsNoSave.remove(config);
+        configs.add(config);
+        saveMopidyServer(c, config);
     }
 
     public int createNewMopidyServer(Context c){
@@ -84,17 +101,39 @@ public class MopidyServerConfigManager extends Observable{
         for (int i=0; i<configs.size(); i++){
             saveMopidyServer(c, configs.get(i));
         }
+        saveServerCount(c);
         setChanged();
         notifyObservers();
     }
 
     public int numberOfServers(){
-        return configs.size();
+        return configs.size() + configsNoSave.size();
     }
 
     private void setCurrentID(Context c, int currentID) {
-        this.currentID = currentID;
-        SharedPreferences p = c.getSharedPreferences(MY_SERVERS, Context.MODE_PRIVATE);
-        p.edit().putInt(CURRENT_SERVER, currentID).commit();
+        if (currentID < configs.size()){
+            currentServer  = configs.get(currentID);
+            SharedPreferences p = c.getSharedPreferences(MY_SERVERS, Context.MODE_PRIVATE);
+            p.edit().putInt(CURRENT_SERVER, currentID).commit();
+        }
+    }
+
+    public void foundServer(String name, String host, int port){
+        MopidyServerConfig config = new MopidyServerConfig(-1, name, host, port);
+        if (configs.indexOf(config) != -1){
+            configs.get(configs.indexOf(config)).setAvailable(true);
+        }else if (configsNoSave.indexOf(config) == -1){
+            config.setAvailable(true);
+            configsNoSave.add(config);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    public void resetNotSaved(){
+        configsNoSave.clear();
+        for (int i=0; i<configs.size(); i++){
+            configs.get(i).setAvailable(false);
+        }
     }
 }

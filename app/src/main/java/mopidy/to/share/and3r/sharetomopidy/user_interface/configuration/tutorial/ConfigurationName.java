@@ -24,7 +24,7 @@ public class ConfigurationName extends Fragment implements TextWatcher{
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.configuration_name, container, false);
         nameEditText = (EditText) rootView.findViewById(R.id.nameEditText);
         ConfigurationActivity activity = ((ConfigurationActivity)getActivity());
-        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId(), false);
+        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId());
         nameEditText.setText(config.getName());
         nameEditText.addTextChangedListener(this);
         return rootView;
@@ -43,7 +43,7 @@ public class ConfigurationName extends Fragment implements TextWatcher{
     @Override
     public void afterTextChanged(Editable s) {
         ConfigurationActivity activity = ((ConfigurationActivity)getActivity());
-        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId(), true);
+        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId());
         config.setName(getActivity(), s.toString());
     }
 }

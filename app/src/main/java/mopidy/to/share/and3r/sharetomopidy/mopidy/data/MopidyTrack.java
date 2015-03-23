@@ -1,5 +1,6 @@
 package mopidy.to.share.and3r.sharetomopidy.mopidy.data;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,6 +9,7 @@ import java.io.Serializable;
 
 public class MopidyTrack extends MopidyDataWithImage implements Serializable{
 
+    private MopidyArtist[] artists;
     private String trackString;
     private MopidyAlbum album;
     private int length;
@@ -25,6 +27,16 @@ public class MopidyTrack extends MopidyDataWithImage implements Serializable{
             }
 
         }
+        try{
+            JSONArray artistsJSON = pObject.getJSONArray("artists");
+            artists = new MopidyArtist[artistsJSON.length()];
+            for (int i=0; i<artistsJSON.length(); i++){
+                artists[i] = new MopidyArtist(artistsJSON.getJSONObject(i));
+            }
+        }catch (JSONException e){
+            artists = new MopidyArtist[0];
+        }
+
         try {
             album = new MopidyAlbum(pObject.getJSONObject("album"));
         } catch (JSONException e) {
@@ -59,7 +71,11 @@ public class MopidyTrack extends MopidyDataWithImage implements Serializable{
     }
 
     public String getArtistsString() {
-        return album.getArtistsString();
+        if (album.getArtists().length>0){
+            return MopidyData.getArtistsString(album.getArtists());
+        }else{
+            return MopidyData.getArtistsString(artists);
+        }
     }
 
     public int getLength() {

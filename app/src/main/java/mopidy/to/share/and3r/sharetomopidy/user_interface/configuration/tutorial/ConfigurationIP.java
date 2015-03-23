@@ -27,7 +27,7 @@ public class ConfigurationIP extends Fragment implements TextWatcher {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.configuration_ip, container, false);
         ipEditText = (EditText) rootView.findViewById(R.id.ipEditText);
         ConfigurationActivity activity = ((ConfigurationActivity)getActivity());
-        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId(), false);
+        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId());
         ipEditText.setText(config.getIp());
         ipEditText.addTextChangedListener(this);
         return rootView;
@@ -46,7 +46,7 @@ public class ConfigurationIP extends Fragment implements TextWatcher {
     @Override
     public void afterTextChanged(Editable s) {
         ConfigurationActivity activity = ((ConfigurationActivity)getActivity());
-        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId(), true);
+        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId());
         config.setIp(getActivity(), s.toString());
     }
 }

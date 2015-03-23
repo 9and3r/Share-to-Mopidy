@@ -44,7 +44,7 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerHolder> {
         if (position == getItemCount()-1){
             return 0;
         }else{
-            return MopidyServerConfigManager.get().getConfig(null, position, false).hashCode();
+            return MopidyServerConfigManager.get().getConfig(null, position).hashCode();
         }
     }
 

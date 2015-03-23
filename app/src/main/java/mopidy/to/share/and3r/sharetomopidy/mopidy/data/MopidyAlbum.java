@@ -21,6 +21,11 @@ public class MopidyAlbum extends MopidyDataWithImage implements Serializable{
         super(object);
         try{
             albumName = object.getString("name");
+
+        }catch (JSONException e){
+            albumName = "";
+        }
+        try{
             JSONArray artistsJSON = object.getJSONArray("artists");
             artists = new MopidyArtist[artistsJSON.length()];
             for (int i=0; i<artistsJSON.length(); i++){
@@ -28,8 +33,8 @@ public class MopidyAlbum extends MopidyDataWithImage implements Serializable{
             }
         }catch (JSONException e){
             artists = new MopidyArtist[0];
-            albumName = "";
         }
+
     }
 
     @Override
@@ -50,20 +55,10 @@ public class MopidyAlbum extends MopidyDataWithImage implements Serializable{
         return artists;
     }
 
-    public String getArtistsString(){
-        String artistString = "";
-        for (int i=0; i<artists.length; i++){
-            artistString = artistString + artists[i].getArtistName() + ", ";
-        }
-        // Remove last ', '
-        if (artistString.contains(", ")){
-            artistString = artistString.substring(0, artistString.lastIndexOf(", "));
-        }
-        return artistString;
-    }
+
 
     public String getAlbumDownloadName(){
-        return getAlbumName() + "#" + getArtistsString();
+        return getAlbumName() + "#" + MopidyData.getArtistsString(artists);
     }
 
     @Override

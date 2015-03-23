@@ -70,4 +70,6 @@
         <item>Remove from tracklist</item>
     </string-array>
 
+    <string name="available">Available</string>
+
 </resources>

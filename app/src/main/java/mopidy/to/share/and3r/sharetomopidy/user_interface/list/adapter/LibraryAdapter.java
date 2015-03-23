@@ -26,7 +26,7 @@ public class LibraryAdapter extends BaseListAdapter implements OnRequestListener
 
     @Override
     public void onClick(View v, int item) {
-        if (((MopidyDataRef)list[item]).getType().equals(MopidyDataRef.TYPE_DIRECTORY)){
+        if (!((MopidyDataRef)list[item]).getType().equals(MopidyDataRef.TYPE_TRACK)){
             currentPath.addLast(list[item]);
             loadPath(v.getContext());
         }else{

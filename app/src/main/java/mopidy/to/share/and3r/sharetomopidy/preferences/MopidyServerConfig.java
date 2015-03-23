@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class MopidyServerConfig {
+public class MopidyServerConfig{
 
 
 
@@ -17,6 +17,8 @@ public class MopidyServerConfig {
     private int port;
 
     private int id;
+
+    private boolean available;
 
     public int getId() {
         return id;
@@ -73,6 +75,16 @@ public class MopidyServerConfig {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o instanceof MopidyServerConfig){
+            if (((MopidyServerConfig) o).port == port && ((MopidyServerConfig) o).ip.equals(ip)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
         JSONObject object = new JSONObject();
         try {
@@ -84,6 +96,14 @@ public class MopidyServerConfig {
             e.printStackTrace();
         }
         return object.toString();
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }
 

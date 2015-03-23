@@ -23,15 +23,9 @@ public class ApplicationShareToMopidy extends Application {
 
 
     public static void init(Context context) {
-
-
-
         MopidyServerConfigManager.get().init(context);
         if(PreferencesManager.get().isFirsTime(context)){
-            MopidyServerConfigManager.get().createNewMopidyServer(context);
-            Intent intent = new Intent(context, ConfigurationActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            //Is the first time do something
         }
     }
 }

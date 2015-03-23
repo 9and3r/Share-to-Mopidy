@@ -28,7 +28,7 @@ public class ConfigurationMopidy extends Fragment implements TextWatcher {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.configuration_mopidy, container, false);
         portEditText = (EditText) rootView.findViewById(R.id.portEditText);
         ConfigurationActivity activity = ((ConfigurationActivity)getActivity());
-        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId(), true);
+        MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId());
         portEditText.setText(String.valueOf(config.getPort()));
         portEditText.addTextChangedListener(this);
         return rootView;
@@ -49,7 +49,7 @@ public class ConfigurationMopidy extends Fragment implements TextWatcher {
         try{
             int port = Integer.valueOf(s.toString());
             ConfigurationActivity activity = ((ConfigurationActivity)getActivity());
-            MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId(), true);
+            MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId());
             config.setPort(getActivity(),port);
         }catch (NumberFormatException e){
 

@@ -55,7 +55,7 @@ public class ConfigurationTest extends Fragment{
             testing = true;
             changeVisibleLayout(loadingLayout);
             ConfigurationActivity activity = ((ConfigurationActivity)getActivity());
-            MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId(), true);
+            MopidyServerConfig config = MopidyServerConfigManager.get().getConfig(activity, activity.getId());
             String ip = config.getIp();
             int port = config.getPort();
             AsyncHttpClient.getDefaultInstance().websocket("http://"+ip+":"+String.valueOf(port)+"/mopidy/ws", "ws", new AsyncHttpClient.WebSocketConnectCallback() {

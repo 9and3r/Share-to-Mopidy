@@ -39,4 +39,16 @@ public abstract class MopidyData implements Serializable{
             return false;
         }
     }
+
+    public static String getArtistsString(MopidyArtist[] artists){
+        String artistString = "";
+        for (int i=0; i<artists.length; i++){
+            artistString = artistString + artists[i].getArtistName() + ", ";
+        }
+        // Remove last ', '
+        if (artistString.contains(", ")){
+            artistString = artistString.substring(0, artistString.lastIndexOf(", "));
+        }
+        return artistString;
+    }
 }
