@@ -30,4 +30,5 @@ dependencies {
     compile('com.mikepenz.aboutlibraries:library:4.5.9@aar') {
         transitive = true
     }
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.6.2'
 }

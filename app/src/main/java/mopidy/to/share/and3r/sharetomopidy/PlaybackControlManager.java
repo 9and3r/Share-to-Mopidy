@@ -243,4 +243,33 @@ public class PlaybackControlManager {
             playTrackListTlTrack(c, track);
         }
     }
+
+    public static void refreshPlaylists(Context c){
+        Intent intent = new Intent(c, MopidyService.class);
+        intent.setAction(MopidyService.ACTION_ONE_ACTION);
+        DefaultJSON json = new DefaultJSON();
+        json.setMethod("core.playlists.refresh");
+        intent.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
+        c.startService(intent);
+    }
+
+    public static void moveTrackTracklist(Context c, int currentPos, int newPos){
+        try{
+            DefaultJSON json = new DefaultJSON();
+            JSONObject params = new JSONObject();
+            params.put("start", currentPos);
+            params.put("end", currentPos+1);
+            params.put("to_position", newPos);
+            json.put("params", params);
+            json.setMethod("core.tracklist.move");
+
+            Intent i = new Intent(c, MopidyService.class);
+            i.setAction(MopidyService.ACTION_ONE_ACTION);
+            i.putExtra(MopidyService.ONE_ACTION_DATA, json.toString());
+            c.startService(i);
+
+        }catch (JSONException e){
+
+        }
+    }
 }

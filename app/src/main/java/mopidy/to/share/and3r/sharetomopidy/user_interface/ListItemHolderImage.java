@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import mopidy.to.share.and3r.sharetomopidy.R;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyDataWithImage;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
@@ -22,10 +23,13 @@ import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListA
  */
 public class ListItemHolderImage extends BaseListItem implements OnImageAndPaletteReady {
 
-    private ImageView albumArt;
+
+    public ImageView albumArt;
     private TextView text2;
 
     private static int albumArtSize;
+    private MopidyDataWithImage loadedImageData;
+
 
     private TaskImage task;
 
@@ -48,9 +52,12 @@ public class ListItemHolderImage extends BaseListItem implements OnImageAndPalet
     public void setMopidyData(MopidyData pData, int i) {
         super.setMopidyData(pData, i);
         text2.setText(pData.getSubTitle());
-        albumArt.setImageResource(R.drawable.no_album);
-        task = new TaskImage(ListItemHolderImage.this, (MopidyDataWithImage) data, albumArtSize, albumArtSize);
-        task.execute(albumArt.getContext());
+        if (loadedImageData == null || ! loadedImageData.getAlbum().equals(((MopidyDataWithImage)(pData)).getAlbum())){
+            loadedImageData = null;
+            albumArt.setImageResource(R.drawable.no_album);
+            task = new TaskImage(ListItemHolderImage.this, (MopidyDataWithImage) data, albumArtSize, albumArtSize);
+            task.execute(albumArt.getContext());
+        }
 
     }
 
@@ -61,14 +68,13 @@ public class ListItemHolderImage extends BaseListItem implements OnImageAndPalet
             task.cancel(true);
             task = null;
         }
-        albumArt.setImageResource(R.drawable.no_album);
     }
+
+
 
     @Override
-    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
+    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette, MopidyDataWithImage dataImage) {
         albumArt.setImageBitmap(bitmap);
+        loadedImageData = dataImage;
     }
-
-
-
 }

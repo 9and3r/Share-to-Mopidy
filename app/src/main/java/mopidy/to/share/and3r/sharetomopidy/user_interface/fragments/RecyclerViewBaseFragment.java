@@ -4,13 +4,18 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+
+
+import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
@@ -34,11 +39,10 @@ public class RecyclerViewBaseFragment extends ConnectedBaseFragment{
     private LinearLayoutManager mLayoutManager;
 
 
-    public BaseListAdapter getmAdapter() {
-        return mAdapter;
-    }
+
 
     private BaseListAdapter mAdapter;
+    private RecyclerView.Adapter recyclerViewAdapter;
 
 
     public static RecyclerViewBaseFragment newInstance(int num) {
@@ -63,17 +67,20 @@ public class RecyclerViewBaseFragment extends ConnectedBaseFragment{
 
 
         mRecyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         switch (pos){
             case FRAGMENT_TRACKLIST:
-                mAdapter = new TrackListAdapter();
+                mAdapter = new TrackListAdapter(getActivity());
+                RecyclerViewDragDropManager mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
+                recyclerViewAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(mAdapter);
+                mRecyclerView.setAdapter(recyclerViewAdapter);
+                mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
                 break;
             case FRAGMENT_PLAYLISTS:
-                mAdapter = new PlaylistsAdapter();
+                mAdapter = new PlaylistsAdapter(getActivity().getApplicationContext());
                 break;
             case FRAGMENT_LIBRARY:
                 mAdapter = new LibraryAdapter(root.getContext());
@@ -82,13 +89,16 @@ public class RecyclerViewBaseFragment extends ConnectedBaseFragment{
                 mAdapter = new BaseListAdapter();
                 break;
         }
-        mRecyclerView.setAdapter(mAdapter);
+
+        if (recyclerViewAdapter == null){
+            mRecyclerView.setAdapter(mAdapter);
+        }
+
+
+
         return root;
     }
 
-    public void setList(MopidyData[] data){
-        mAdapter.setList(data);
-    }
 
     @Override
     public void onResume() {

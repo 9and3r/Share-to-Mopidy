@@ -159,7 +159,6 @@ public class MopidyConnection {
                 }else if (event.equals("track_playback_started") || event.equals("track_playback_paused") || event.equals("track_playback_resumed")){
                     MopidyStatus.get().trackChanged(object.getJSONObject("tl_track"));
                 }else if (event.equals("tracklist_changed")){
-                    MopidyStatus.get().tracklistChanged(null);
                     DefaultJSON json = new DefaultJSON();
                     json.put("id",4);
                     json.setMethod("core.tracklist.get_tl_tracks");

@@ -24,6 +24,7 @@ import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyConnection;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.DefaultJSON;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyDataWithImage;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
 import mopidy.to.share.and3r.sharetomopidy.preferences.MopidyServerConfig;
@@ -233,7 +234,7 @@ public class MopidyService extends Service implements Observer {
         lastAlbum = null;
         task = new TaskImage(new OnImageAndPaletteReady() {
             @Override
-            public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
+            public void onImageAndPaletteReady(Bitmap bitmap, Palette palette, MopidyDataWithImage data) {
                 lastBitmap = bitmap;
                 lastAlbum = pAlbum;
                 task = null;

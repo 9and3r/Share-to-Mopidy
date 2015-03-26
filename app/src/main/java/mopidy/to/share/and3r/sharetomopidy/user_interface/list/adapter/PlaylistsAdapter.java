@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 import java.util.Observable;
 import java.util.Observer;
 
+import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyPlaylist;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
@@ -25,9 +27,11 @@ import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
 public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListener, Observer {
 
+    private Context context;
 
 
-    public PlaylistsAdapter(){
+    public PlaylistsAdapter(Context c){
+        context = c;
         list = MopidyStatus.get().getPlaylists();
     }
 
@@ -111,4 +115,6 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
                 break;
         }
     }
+
+
 }

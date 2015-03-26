@@ -47,6 +47,7 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
     protected ActionBarActivity activity;
 
     public BaseListAdapter(){
+        super();
         status = LOADED;
         list = new MopidyData[0];
         currentPath = new LinkedList<>();
@@ -91,8 +92,10 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
     public int getItemCount() {
         if (status == LOADED){
             return list.length;
-        }else{
+        }else if (status == LOADING){
             return 1;
+        }else{
+            return 0;
         }
 
     }

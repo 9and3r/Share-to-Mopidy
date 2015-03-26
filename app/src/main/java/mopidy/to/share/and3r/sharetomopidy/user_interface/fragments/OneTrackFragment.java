@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.R;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyDataWithImage;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.TaskImage;
@@ -85,7 +86,7 @@ public class OneTrackFragment extends Fragment implements OnImageAndPaletteReady
     }
 
     @Override
-    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
+    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette, MopidyDataWithImage data) {
         if (bitmap != null){
             albumImageView.setImageBitmap(bitmap);
         }

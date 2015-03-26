@@ -153,7 +153,7 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
         if (!isCancelled() && bitmap != null){
-            callback.onImageAndPaletteReady(bitmap, palette);
+            callback.onImageAndPaletteReady(bitmap, palette, data);
         }
     }
 

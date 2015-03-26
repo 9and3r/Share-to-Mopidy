@@ -6,5 +6,5 @@ import android.support.v7.graphics.Palette;
 
 public interface OnImageAndPaletteReady {
 
-    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette);
+    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette, MopidyDataWithImage dataImage);
 }

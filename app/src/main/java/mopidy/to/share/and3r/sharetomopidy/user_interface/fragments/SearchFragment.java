@@ -102,7 +102,7 @@ public class SearchFragment extends ConnectedBaseFragment implements OnRequestLi
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    fragment.setList(tracks);
+                    //fragment.setList(tracks);
                 }
             });
 

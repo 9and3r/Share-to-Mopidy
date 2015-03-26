@@ -32,6 +32,7 @@ import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyAlbum;
+import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyDataWithImage;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.OnImageAndPaletteReady;
@@ -189,7 +190,8 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
         });
 
 
-        adapter = new TrackPagerAdapter(((FragmentActivity)getActivity()).getSupportFragmentManager());
+        //adapter = new TrackPagerAdapter(((FragmentActivity)getActivity()).getSupportFragmentManager());
+        adapter = new TrackPagerAdapter(getChildFragmentManager());
         pager.setAdapter(adapter);
         repeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -363,7 +365,7 @@ public class NowPlayingFragment extends Fragment implements Observer, SeekBar.On
                 // Load new Image
                 TaskImage task = new TaskImage(new OnImageAndPaletteReady() {
                     @Override
-                    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette) {
+                    public void onImageAndPaletteReady(Bitmap bitmap, Palette palette, MopidyDataWithImage data) {
                         smallAlbumArt.setImageBitmap(bitmap);
                         taskImage = null;
                         if (palette != null) {

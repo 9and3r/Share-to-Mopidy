@@ -39,21 +39,7 @@ public class TrackPagerAdapter extends FragmentStatePagerAdapter {
     }
 
 
-    @Override
-    public int getItemPosition(Object object) {
-            if (object instanceof OneTrackFragment){
-                OneTrackFragment f = (OneTrackFragment) object;
-                int pos = MopidyStatus.get().positionInTracklist(f.getTrack());
-                if (pos == -1){
-                    return POSITION_NONE;
-                }else{
-                    return pos;
-                }
-            }else{
-                return POSITION_NONE;
-            }
 
-    }
 
     @Override
     public void notifyDataSetChanged() {
