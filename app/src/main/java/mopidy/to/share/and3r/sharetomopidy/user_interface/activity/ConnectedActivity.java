@@ -1,6 +1,7 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,13 +12,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Toast;
 
+import com.mikepenz.aboutlibraries.Libs;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.Observable;
@@ -26,9 +30,11 @@ import java.util.Observer;
 import mopidy.to.share.and3r.sharetomopidy.MopidyService;
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.OldMopidyDialog;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.ConnectedBaseFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.RecyclerViewBaseFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.SearchFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.TrackListFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListAdapter;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.NowPlayingFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.LibraryAdapter;
@@ -103,8 +109,12 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
             disconnect();
             return true;
         } else if (id == R.id.action_about) {
-            Intent intent = new Intent(this, AboutActivity.class);
-            startActivity(intent);
+                new Libs.Builder().withFields(R.string.class.getFields())
+                        .withAboutIconShown(true)
+                        .withAboutVersionShown(true)
+                        .withLibraries("androidslidinguppanel", "androidasync", "mopidy")
+                        .withActivityTitle(getString(R.string.about))
+                        .start(this);
         }
 
         return super.onOptionsItemSelected(item);
@@ -113,8 +123,9 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
     @Override
     protected void onResume() {
         super.onResume();
-        onConnectionStateChange();
         MopidyStatus.get().addObserver(this);
+        onConnectionStateChange();
+        onMopidyVersionLoaded();
         /*
         if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
@@ -151,6 +162,19 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
         }
     }
 
+    public void onMopidyVersionLoaded(){
+        String version = MopidyStatus.get().getMopidyVersion();
+        if (version != null){
+            Log.d("Proba", version);
+            String[] versionNumbers = version.split("\\.");
+            if (Integer.parseInt(versionNumbers[0]) == 0){
+                OldMopidyDialog dialog = new OldMopidyDialog();
+                dialog.show(getSupportFragmentManager(), "OLD_MOPIDY_ERROR");
+
+            }
+        }
+    }
+
     public void disconnect() {
         Intent intent = new Intent(this, MopidyService.class);
         intent.setAction(MopidyService.ACTION_STOP_SERVICE);
@@ -160,13 +184,26 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        if (((int) data) == MopidyStatus.CONNECTION_STATE_CHANGED) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    onConnectionStateChange();
-                }
-            });
+        int event = (int) data;
+        switch (event){
+            case MopidyStatus.CONNECTION_STATE_CHANGED:
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onConnectionStateChange();
+                    }
+                });
+                break;
+            case MopidyStatus.EVENT_MOPIDY_VERSION_LOADED:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onMopidyVersionLoaded();
+                    }
+                });
+                break;
+
         }
     }
 

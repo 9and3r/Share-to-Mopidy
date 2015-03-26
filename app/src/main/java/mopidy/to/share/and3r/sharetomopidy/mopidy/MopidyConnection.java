@@ -40,6 +40,10 @@ public class MopidyConnection {
         actionsNoReturn = new LinkedList<>();
         DefaultJSON action = new DefaultJSON();
         try {
+            action.put("id", 13);
+            action.setMethod("core.get_version");
+            actionsNoReturn.addLast(action.toString());
+
             action.put("id", 3);
             action.setMethod("core.playback.get_state");
             actionsNoReturn.addLast(action.toString());
@@ -228,6 +232,9 @@ public class MopidyConnection {
                     case 12:
                         JSONArray playlists = object.getJSONArray("result");
                         MopidyStatus.get().onPlaylistsChanged(playlists);
+                        break;
+                    case 13:
+                        MopidyStatus.get().setMopidyVersion(object.getString("result"));
                         break;
                     default:
                         MopidyDataFetch.get().onResultReceived(object);

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<string name="define_int_mopidy"></string>
+	<!-- Author section -->
+	<string name="library_mopidy_author">Stein Magnus Jodal</string>
+	<string name="library_mopidy_authorWebsite">http://jodal.no</string>
+	<!-- Library section -->
+	<string name="library_mopidy_libraryName">Mopidy</string>
+	<string name="library_mopidy_libraryDescription">Mopidy is an extensible music server written in Python. Mopidy plays music from local disk, Spotify, SoundCloud, Google Play Music, and more. You edit the playlist from any phone, tablet, or computer using a range of MPD and web clients</string>
+	<string name="library_mopidy_libraryWebsite">https://www.mopidy.com</string>
+	<string name="library_mopidy_libraryVersion">1.0.0</string>
+	<!-- OpenSource section -->
+	<string name="library_mopidy_isOpenSource">true</string>
+	<string name="library_mopidy_repositoryLink">https://github.com/mopidy/mopidy</string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_mopidy_classPath"></string>
+	<!-- License section -->
+	<string name="library_mopidy_licenseId">apache_2_0</string>
+	<!-- Custom variables section -->
+</resources>

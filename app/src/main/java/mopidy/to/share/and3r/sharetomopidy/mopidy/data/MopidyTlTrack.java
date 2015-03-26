@@ -31,9 +31,7 @@ public class MopidyTlTrack extends MopidyTrack implements Serializable{
     @Override
     public boolean equals(Object o) {
         if (o instanceof MopidyTlTrack){
-            return ((MopidyTlTrack)o).tl_track.equals(tl_track);
-        }else if (o instanceof JSONObject){
-            return ((JSONObject)o).toString().equals(tl_track);
+            return (((MopidyTlTrack) o).getUri().equals(this.getUri()) && tlid == ((MopidyTlTrack) o).tlid);
         }else{
             return super.equals(o);
         }

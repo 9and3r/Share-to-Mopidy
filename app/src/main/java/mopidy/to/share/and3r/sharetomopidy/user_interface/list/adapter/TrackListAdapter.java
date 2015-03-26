@@ -2,6 +2,7 @@ package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 
 import java.util.Observable;
@@ -28,7 +29,7 @@ public class TrackListAdapter extends BaseListAdapter implements Observer{
 
     @Override
     public void onClick(View v, int item) {
-        PlaybackControlManager.playTrackListTlTrack(v.getContext(), (MopidyTlTrack)list[item]);
+        PlaybackControlManager.playTrackListTlTrack(v.getContext(), item);
     }
 
     public void onLongClick(View v, int item){

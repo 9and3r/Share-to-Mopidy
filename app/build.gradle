@@ -27,4 +27,7 @@ dependencies {
     compile 'com.android.support:palette-v7:21.0.0'
     compile 'com.koushikdutta.async:androidasync:2.+'
     compile 'com.sothree.slidinguppanel:library:3.0.0'
+    compile('com.mikepenz.aboutlibraries:library:4.5.9@aar') {
+        transitive = true
+    }
 }

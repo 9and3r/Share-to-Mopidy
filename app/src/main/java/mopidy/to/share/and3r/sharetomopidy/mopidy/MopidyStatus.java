@@ -45,11 +45,13 @@ public class MopidyStatus extends Observable{
     public static final int EVENT_MUTE_CHANGED = 7;
     public static final int EVENT_VOLUME_CHANGED = 8;
     public static final int EVENT_PLAYLISTS_CHANGED = 10;
+    public static final int EVENT_MOPIDY_VERSION_LOADED = 11;
 
     public static final int EVENT_SEEK = 9;
 
     private int connectionStatus;
 
+    private String mopidyVersion;
     private MopidyTlTrack[] tracklist;
     private boolean repeat;
     private boolean random;
@@ -140,9 +142,14 @@ public class MopidyStatus extends Observable{
 
 
     public void trackChanged(JSONObject track){
-        currentPos = positionInTracklist(track);
-        setChanged();
-        notifyObservers(EVENT_CURRENT_TRACK_CHANGED);
+        try {
+            currentPos = positionInTracklist(new MopidyTlTrack(track));
+            setChanged();
+            notifyObservers(EVENT_CURRENT_TRACK_CHANGED);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void onSeek(long newPos){
@@ -152,7 +159,7 @@ public class MopidyStatus extends Observable{
         notifyObservers(EVENT_SEEK);
     }
 
-    public int positionInTracklist(Object track){
+    public int positionInTracklist(MopidyTrack track){
         int pos = 0;
         boolean found = false;
         while(!found && pos<tracklist.length){
@@ -347,6 +354,16 @@ public class MopidyStatus extends Observable{
         }else{
             return null;
         }
+    }
+
+    public String getMopidyVersion() {
+        return mopidyVersion;
+    }
+
+    public void setMopidyVersion(String mopidyVersion) {
+        this.mopidyVersion = mopidyVersion;
+        setChanged();
+        notifyObservers(EVENT_MOPIDY_VERSION_LOADED);
     }
 
     public String getCurrentSeekPosString(){

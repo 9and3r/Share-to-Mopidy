@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<string name="define_int_androidasync"></string>
+	<!-- Author section -->
+	<string name="library_androidasync_author">Koushik Dutta</string>
+	<string name="library_androidasync_authorWebsite">http://koush.com/</string>
+	<!-- Library section -->
+	<string name="library_androidasync_libraryName">AndroidAsync</string>
+	<string name="library_androidasync_libraryDescription">AndroidAsync is a low level network protocol library</string>
+	<string name="library_androidasync_libraryWebsite">https://github.com/koush/AndroidAsync</string>
+	<string name="library_androidasync_libraryVersion">2.1.3</string>
+	<!-- OpenSource section -->
+	<string name="library_androidasync_isOpenSource">true</string>
+	<string name="library_androidasync_repositoryLink">https://github.com/koush/AndroidAsync</string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_androidasync_classPath">com.koushikdutta.async:androidasync</string>
+	<!-- License section -->
+	<string name="library_androidasync_licenseId">apache_2_0</string>
+	<!-- Custom variables section -->
+</resources>
