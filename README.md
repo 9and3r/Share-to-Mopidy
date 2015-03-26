@@ -27,7 +27,7 @@ Share the video and share to mopidy will show up as an option.
 <h2>Resources used</h2>
 <ul>
 <li><a href="https://github.com/koush/AndroidAsync">AndroidAsync</a> for websocket</li>
-<li><a href="https://github.com/nostra13/Android-Universal-Image-Loader">Android-Universal-Image-Loader</a> to load the images</li>
+<li><a href="https://github.com/umano/AndroidSlidingUpPanel">Android Sliding Up Panel</a></li>
 <li><a href="http://www.last.fm/api">Last FM API</a> to get album covers</li>
 <li><a href="http://romannurik.github.io/AndroidAssetStudio/">Android Asset Studio</a> for icons
 </ul>
