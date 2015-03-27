@@ -31,4 +31,5 @@ dependencies {
         transitive = true
     }
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.6.2'
+    compile 'com.malinskiy:superrecyclerview:1.1.0'
 }

@@ -14,28 +14,18 @@ import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyDataRef;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.MopidyDataOptionsDialog;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.TracklistTlTrackOptionsDialog;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.BaseHolder;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.OnBaseListItemClickListener;
 import mopidy.to.share.and3r.sharetomopidy.utils.MopidyDataFetch;
 import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
 public class LibraryAdapter extends BaseListAdapter implements OnRequestListener {
 
-    public LibraryAdapter(ActionBarActivity activity) {
-        super(activity);
-        loadPath(activity);
+    public LibraryAdapter(Context c, OnBaseListItemClickListener listener) {
+        super(listener);
+        loadPath(c);
 
     }
-
-    @Override
-    public void onClick(View v, int item) {
-        if (!((MopidyDataRef)list[item]).getType().equals(MopidyDataRef.TYPE_TRACK)){
-            currentPath.addLast(list[item]);
-            loadPath(v.getContext());
-        }else{
-            super.onClick(v, item);
-        }
-    }
-
-
 
     @Override
     public void loadPath(Context c) {

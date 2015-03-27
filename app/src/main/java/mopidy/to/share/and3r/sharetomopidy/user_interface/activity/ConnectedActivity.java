@@ -24,6 +24,7 @@ import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.OldMopidyDialog;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.ConnectedBaseFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.NowPlayingFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.fragments.SearchFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.fragments.LibraryFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.fragments.PlaylistsFragment;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.fragments.TracklistFragment;
@@ -216,7 +217,7 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -225,9 +226,11 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
                 case 0:
                     return new TracklistFragment();
                 case 1:
-                    return new LibraryFragment();
-                case 2:
                     return new PlaylistsFragment();
+                case 2:
+                    return new LibraryFragment();
+                case 3:
+                    return new SearchFragment();
             }
             return null;
         }

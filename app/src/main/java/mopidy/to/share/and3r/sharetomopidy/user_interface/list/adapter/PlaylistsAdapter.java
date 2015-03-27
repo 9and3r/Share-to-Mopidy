@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
@@ -21,6 +22,8 @@ import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyPlaylist;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListAdapter;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.BaseHolder;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.OnBaseListItemClickListener;
 import mopidy.to.share.and3r.sharetomopidy.utils.MopidyDataFetch;
 import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
@@ -30,8 +33,8 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
 
 
 
-    public PlaylistsAdapter(ActionBarActivity activity){
-        super(activity);
+    public PlaylistsAdapter(OnBaseListItemClickListener listener){
+        super(listener);
         list = MopidyStatus.get().getPlaylists();
     }
 
@@ -41,15 +44,7 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
         super.onDataChanged();
     }
 
-    @Override
-    public void onClick(View v, int item) {
-        if (list[item] instanceof MopidyPlaylist){
-            currentPath.addLast(list[item]);
-            loadPath(v.getContext());
-        }else{
-            super.onClick(v, item);
-        }
-    }
+
 
     @Override
     public void loadPath(Context c) {
@@ -83,13 +78,26 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
         });
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        MopidyStatus.get().addObserver(this);
+        onDataChanged();
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        MopidyStatus.get().deleteObserver(this);
+    }
+
 
     @Override
     public void update(Observable observable, Object data) {
         int event = (int) data;
         switch (event){
             case MopidyStatus.EVENT_PLAYLISTS_CHANGED:
-                activity.runOnUiThread(new Runnable() {
+                h.post(new Runnable() {
                     @Override
                     public void run() {
                         if (currentPath.size() == 0){

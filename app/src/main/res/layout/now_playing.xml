@@ -49,6 +49,7 @@
             android:layout_width="?attr/actionBarSize"
             android:layout_height="match_parent"
             android:id="@+id/playPauseButtonSmallView"
+            android:background="?attr/selectableItemBackground"
             android:src="@drawable/ic_action_play"
             android:layout_toLeftOf="@+id/nextButtonSmallView"
             android:layout_toStartOf="@+id/nextButtonSmallView"
@@ -58,6 +59,7 @@
             android:layout_width="?attr/actionBarSize"
             android:layout_height="match_parent"
             android:id="@+id/nextButtonSmallView"
+            android:background="?attr/selectableItemBackground"
             android:src="@drawable/ic_action_next"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -113,6 +115,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="8dp"
                     android:id="@+id/repeatButton"
+                    android:background="?attr/selectableItemBackground"
                     android:src="@drawable/ic_action_repeat"
                     android:layout_weight="1"/>
 
@@ -120,6 +123,7 @@
                     android:layout_width="0dp"
                     android:clickable="true"
                     android:layout_margin="8dp"
+                    android:background="?attr/selectableItemBackground"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceLarge"
@@ -135,6 +139,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:id="@+id/previousButton"
+                android:background="?attr/selectableItemBackground"
                 android:layout_weight="1.3"
                 android:src="@drawable/ic_action_previous"/>
 
@@ -143,6 +148,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:id="@+id/playPauseButton"
+                android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_action_play"
                 android:layout_weight="1.7"/>
 
@@ -151,6 +157,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/nextButton"
                 android:layout_margin="8dp"
+                android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_action_next"
                 android:layout_weight="1.3"/>
 
@@ -160,6 +167,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/shuffleButton"
                     android:layout_margin="8dp"
+                    android:background="?attr/selectableItemBackground"
                     android:src="@drawable/ic_action_shuffle"
                     android:layout_weight="1"/>
 
@@ -169,6 +177,7 @@
                     android:clickable="true"
                     android:gravity="center"
                     android:layout_margin="8dp"
+                    android:background="?attr/selectableItemBackground"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/consume_text"
                     android:id="@+id/consumeButton"
@@ -184,6 +193,7 @@
             android:layout_height="32dp"
             android:text="@string/time"
             android:gravity="center"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/currenSeekPositionTextView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -195,6 +205,7 @@
             android:layout_height="32dp"
             android:gravity="center"
             android:text="@string/time"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/trackLenghtTextView"
             android:layout_alignRight="@+id/playback_controls_table"
             android:layout_alignParentTop="true"
@@ -218,6 +229,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/muted_image_view"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"

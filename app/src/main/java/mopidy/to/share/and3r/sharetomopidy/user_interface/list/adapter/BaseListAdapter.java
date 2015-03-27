@@ -18,35 +18,38 @@ import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.BaseHolder;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.BaseListItem;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.ListItemHolderImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.ListItemHolderNoImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.MopidyDataOptionsDialog;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.OnBaseListItemClickListener;
 
 
 public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
 
-    private static final int VIEW_TYPE_IMAGE = 1;
-    private static final int VIEW_TYPE_NO_IMAGE = 2;
-    private static final int VIEW_TYPE_LOADING = 3;
+    public static final int VIEW_TYPE_IMAGE = 1;
+    public static final int VIEW_TYPE_NO_IMAGE = 2;
+    public static final int VIEW_TYPE_LOADING = 3;
 
     public static final int LOADING = -1;
     public static final int LOADED = 1;
 
 
-    protected LinkedList<MopidyData> currentPath;
-    protected MopidyData[] list;
+    public LinkedList<MopidyData> currentPath;
+    public MopidyData[] list;
     private int status;
     protected Handler h;
 
-    protected ActionBarActivity activity;
 
-    public BaseListAdapter(ActionBarActivity pActivity){
+    private OnBaseListItemClickListener listener;
+
+    public BaseListAdapter(OnBaseListItemClickListener pListener){
         super();
         status = LOADED;
         list = new MopidyData[0];
         currentPath = new LinkedList<>();
         h = new Handler(Looper.getMainLooper());
-        activity = pActivity;
+        listener = pListener;
     }
 
     @Override
@@ -56,11 +59,11 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
         switch (viewType){
             case VIEW_TYPE_IMAGE:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_with_image, parent, false);
-                item = new ListItemHolderImage(v, this);
+                item = new ListItemHolderImage(v, listener);
                 break;
             case VIEW_TYPE_NO_IMAGE:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_no_image, parent, false);
-                item = new ListItemHolderNoImage(v, this);
+                item = new ListItemHolderNoImage(v, listener);
                 break;
             case VIEW_TYPE_LOADING:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading, parent, false);
@@ -73,7 +76,7 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
     @Override
     public void onBindViewHolder(BaseHolder holder, int position) {
         if (position<list.length){
-            holder.setMopidyData(list[position], position);
+            holder.setMopidyData(list[position], position, 0);
         }
     }
 
@@ -110,19 +113,7 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
         }
     }
 
-    public void onClick(View v, int item){
-        PlaybackControlManager.addToTracklist(v.getContext(), list[item], false);
-        Toast toast = Toast.makeText(v.getContext(), v.getContext().getString(R.string.added_to_tracklist), Toast.LENGTH_SHORT);
-        toast.show();
-    }
 
-    public void onLongClick(View v, int item){
-        MopidyDataOptionsDialog dialog = new MopidyDataOptionsDialog();
-        Bundle b = new Bundle();
-        b.putSerializable(MopidyDataOptionsDialog.MOPIDY_DATA, list[item]);
-        dialog.setArguments(b);
-        dialog.show(activity.getSupportFragmentManager(), "DIALOG_OPTIONS");
-    }
 
     public void setStatus(int pStatus){
         status = pStatus;

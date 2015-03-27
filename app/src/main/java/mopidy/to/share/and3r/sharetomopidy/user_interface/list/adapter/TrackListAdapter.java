@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -17,17 +18,22 @@ import java.util.Observer;
 import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.BaseHolder;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.BaseListItem;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.ListItemHolderImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.MopidyDataOptionsDialog;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.TracklistTlTrackOptionsDialog;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.OnBaseListItemClickListener;
 
 
 public class TrackListAdapter extends BaseListAdapter implements DraggableItemAdapter, Observer {
 
 
+    private Context context;
 
-    public TrackListAdapter(ActionBarActivity activity){
-        super(activity);
+    public TrackListAdapter(Context c, OnBaseListItemClickListener listener){
+        super(listener);
+        context = c;
         setHasStableIds(true);
         list = MopidyStatus.get().getTracklist();
     }
@@ -35,20 +41,6 @@ public class TrackListAdapter extends BaseListAdapter implements DraggableItemAd
     public void onDataChanged(){
         list = MopidyStatus.get().getTracklist();
         super.onDataChanged();
-
-    }
-
-    @Override
-    public void onClick(View v, int item) {
-        PlaybackControlManager.playTrackListTlTrack(v.getContext(), item);
-    }
-
-    public void onLongClick(View v, int item){
-        TracklistTlTrackOptionsDialog dialog = new TracklistTlTrackOptionsDialog();
-        Bundle b = new Bundle();
-        b.putSerializable(MopidyDataOptionsDialog.MOPIDY_DATA, list[item]);
-        dialog.setArguments(b);
-        dialog.show(activity.getSupportFragmentManager(), "DIALOG_TL_TRACK_OPTIONS");
     }
 
     @Override
@@ -57,9 +49,6 @@ public class TrackListAdapter extends BaseListAdapter implements DraggableItemAd
         String id = String.valueOf(track.getTlId()) + track.getUri();
         return Math.abs(id.hashCode());
     }
-
-
-
 
     @Override
     public boolean onCheckCanStartDrag(RecyclerView.ViewHolder viewHolder, int x, int y) {
@@ -78,7 +67,7 @@ public class TrackListAdapter extends BaseListAdapter implements DraggableItemAd
 
     @Override
     public void onMoveItem(int i, int i2) {
-        PlaybackControlManager.moveTrackTracklist(activity, i, i2);
+        PlaybackControlManager.moveTrackTracklist(context, i, i2);
     }
 
     @Override
@@ -99,7 +88,7 @@ public class TrackListAdapter extends BaseListAdapter implements DraggableItemAd
         int event = (int) data;
         switch (event){
             case MopidyStatus.EVENT_TRACKLIST_CHANGED:
-                activity.runOnUiThread(new Runnable() {
+                h.post(new Runnable() {
                     @Override
                     public void run() {
                        onDataChanged();
