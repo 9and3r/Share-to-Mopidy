@@ -2,7 +2,9 @@ package mopidy.to.share.and3r.sharetomopidy.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,7 +82,9 @@ public class MopidyDataFetch {
             json.setMethod("core.library.search");
             JSONObject params = new JSONObject();
             JSONObject queryJson = new JSONObject();
-            queryJson.put("any",query);
+            JSONArray queryStrings = new JSONArray();
+            queryStrings.put(query);
+            queryJson.put("any", queryStrings);
             params.put("query", queryJson);
             json.put("params", params);
             Intent intent = new Intent(c, MopidyService.class);
