@@ -1,25 +1,16 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.activity;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Toast;
 
 import com.mikepenz.aboutlibraries.Libs;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -32,14 +23,10 @@ import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.OldMopidyDialog;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.ConnectedBaseFragment;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.RecyclerViewBaseFragment;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.SearchFragment;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.TrackListFragment;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.BaseListAdapter;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.NowPlayingFragment;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.LibraryAdapter;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.PlaylistsAdapter;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter.TrackListAdapter;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.fragments.LibraryFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.fragments.PlaylistsFragment;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.fragments.TracklistFragment;
 
 
 public class ConnectedActivity extends ActionBarActivity implements  Observer {
@@ -234,11 +221,15 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
         @Override
         public Fragment getItem(int position) {
-            if (position == ConnectedBaseFragment.FRAGMENT_SEARCH){
-                return new SearchFragment();
-            }else{
-                return RecyclerViewBaseFragment.newInstance(position);
+            switch (position){
+                case 0:
+                    return new TracklistFragment();
+                case 1:
+                    return new LibraryFragment();
+                case 2:
+                    return new PlaylistsFragment();
             }
+            return null;
         }
 
         @Override

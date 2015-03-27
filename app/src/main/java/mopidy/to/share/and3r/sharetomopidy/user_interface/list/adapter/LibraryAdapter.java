@@ -2,6 +2,7 @@ package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -18,9 +19,9 @@ import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
 public class LibraryAdapter extends BaseListAdapter implements OnRequestListener {
 
-    public LibraryAdapter(Context c) {
-        super();
-        loadPath(c);
+    public LibraryAdapter(ActionBarActivity activity) {
+        super(activity);
+        loadPath(activity);
 
     }
 

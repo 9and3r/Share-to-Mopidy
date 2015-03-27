@@ -1,31 +1,25 @@
 package mopidy.to.share.and3r.sharetomopidy.user_interface.list.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.nineoldandroids.view.ViewHelper;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import mopidy.to.share.and3r.sharetomopidy.PlaybackControlManager;
 import mopidy.to.share.and3r.sharetomopidy.R;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyData;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTrack;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.BaseHolder;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.BaseListItem;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.ListItemHolderImage;
-import mopidy.to.share.and3r.sharetomopidy.user_interface.ListItemHolderNoImage;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.BaseHolder;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.ListItemHolderImage;
+import mopidy.to.share.and3r.sharetomopidy.user_interface.list.items.ListItemHolderNoImage;
 import mopidy.to.share.and3r.sharetomopidy.user_interface.MopidyDataOptionsDialog;
 
 
@@ -46,12 +40,13 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
 
     protected ActionBarActivity activity;
 
-    public BaseListAdapter(){
+    public BaseListAdapter(ActionBarActivity pActivity){
         super();
         status = LOADED;
         list = new MopidyData[0];
         currentPath = new LinkedList<>();
         h = new Handler(Looper.getMainLooper());
+        activity = pActivity;
     }
 
     @Override
@@ -141,14 +136,6 @@ public class BaseListAdapter extends RecyclerView.Adapter<BaseHolder>{
 
     public void onDataChanged(){
         notifyDataSetChanged();
-    }
-
-    public void onResume(ActionBarActivity pActivity){
-        activity = pActivity;
-    }
-
-    public void onPause(){
-        activity = null;
     }
 
 

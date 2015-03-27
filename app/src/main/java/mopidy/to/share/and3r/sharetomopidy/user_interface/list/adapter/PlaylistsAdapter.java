@@ -27,11 +27,11 @@ import mopidy.to.share.and3r.sharetomopidy.utils.OnRequestListener;
 
 public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListener, Observer {
 
-    private Context context;
 
 
-    public PlaylistsAdapter(Context c){
-        context = c;
+
+    public PlaylistsAdapter(ActionBarActivity activity){
+        super(activity);
         list = MopidyStatus.get().getPlaylists();
     }
 
@@ -50,20 +50,6 @@ public class PlaylistsAdapter extends BaseListAdapter implements OnRequestListen
             super.onClick(v, item);
         }
     }
-
-    @Override
-    public void onResume(ActionBarActivity pActivity) {
-        super.onResume(pActivity);
-        MopidyStatus.get().addObserver(this);
-    }
-
-    @Override
-    public void onPause() {
-        MopidyStatus.get().deleteObserver(this);
-        super.onPause();
-    }
-
-
 
     @Override
     public void loadPath(Context c) {
