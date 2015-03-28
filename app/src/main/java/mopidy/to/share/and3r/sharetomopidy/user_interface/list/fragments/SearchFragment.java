@@ -88,7 +88,6 @@ public class SearchFragment extends ConnectedBaseFragment implements OnRequestLi
 
         if (searchQuery != null && searchQuery.length()>0){
             searchView.setQuery(searchQuery, true);
-            searchView.setIconified(false);
         }
     }
 

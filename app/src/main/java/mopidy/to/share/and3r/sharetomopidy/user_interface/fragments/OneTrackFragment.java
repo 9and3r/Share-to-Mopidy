@@ -56,8 +56,10 @@ public class OneTrackFragment extends Fragment implements OnImageAndPaletteReady
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         public void onGlobalLayout() {
             albumImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            imageTask = new TaskImage(OneTrackFragment.this, track.getAlbum(), albumImageView.getWidth(), albumImageView.getHeight());
-            imageTask.execute(getActivity().getApplicationContext());
+            if (getActivity() != null){
+                imageTask = new TaskImage(OneTrackFragment.this, track.getAlbum(), albumImageView.getWidth(), albumImageView.getHeight());
+                imageTask.execute(getActivity().getApplicationContext());
+            }
         }
     };
 
@@ -71,9 +73,9 @@ public class OneTrackFragment extends Fragment implements OnImageAndPaletteReady
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+    public void onDetach() {
+        super.onDetach();
+        albumImageView.getViewTreeObserver().removeOnGlobalLayoutListener(mGlobalLayoutListener);
     }
 
     @Override

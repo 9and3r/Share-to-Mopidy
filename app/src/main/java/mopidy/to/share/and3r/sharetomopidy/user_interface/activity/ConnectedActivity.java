@@ -50,7 +50,7 @@ public class ConnectedActivity extends ActionBarActivity implements  Observer {
 
 
         mPager = (ViewPager) findViewById(R.id.connected_pager);
-        mPager.setOffscreenPageLimit(2);
+        mPager.setOffscreenPageLimit(4);
         mPagerAdapter = new MyAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 

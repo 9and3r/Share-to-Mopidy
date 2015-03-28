@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import mopidy.to.share.and3r.sharetomopidy.mopidy.MopidyStatus;
 import mopidy.to.share.and3r.sharetomopidy.mopidy.data.MopidyTlTrack;
@@ -13,6 +14,7 @@ import mopidy.to.share.and3r.sharetomopidy.user_interface.fragments.OneTrackFrag
 
 
 public class TrackPagerAdapter extends FragmentStatePagerAdapter {
+
 
 
     private MopidyTlTrack[] tracks;
@@ -39,7 +41,32 @@ public class TrackPagerAdapter extends FragmentStatePagerAdapter {
     }
 
 
+    public int getItemPosition(Object object) {
+        if (object instanceof OneTrackFragment){
+            return indexOf(((OneTrackFragment) object).getTrack());
+        }else{
+            return POSITION_NONE;
+        }
 
+    }
+
+    private int indexOf(MopidyTlTrack track){
+        boolean found = false;
+        int i = 0;
+        while(!found && i < tracks.length){
+            if (track.equals(tracks[i])){
+                found = true;
+
+            }else{
+                i++;
+            }
+        }
+        if (found){
+            return i;
+        }else{
+            return POSITION_NONE;
+        }
+    }
 
     @Override
     public void notifyDataSetChanged() {

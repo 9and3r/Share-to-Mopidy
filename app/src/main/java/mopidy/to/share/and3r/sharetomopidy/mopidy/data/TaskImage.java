@@ -50,7 +50,7 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
 
     @Override
     protected Bitmap doInBackground(Context... params) {
-        File f = new File(new File(params[0].getFilesDir(),"images"), data.getAlbum().getAlbumArtFileName());
+        File f = new File(new File(params[0].getCacheDir(),"images"), data.getAlbum().getAlbumArtFileName());
         boolean correctlyDownloaded = true;
         if (!f.exists()){
             correctlyDownloaded = findUrlAndDownloadImageToStorage(params[0], f);
