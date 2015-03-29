@@ -24,7 +24,7 @@ public class ListItemHolderImage extends BaseListItem implements OnImageAndPalet
     private TextView text2;
 
     private static int albumArtSize;
-    private MopidyDataWithImage loadedImageData;
+    private String loadedImageStringCompare;
 
 
     private TaskImage task;
@@ -48,8 +48,8 @@ public class ListItemHolderImage extends BaseListItem implements OnImageAndPalet
     public void setMopidyData(MopidyData pData, int i, int group) {
         super.setMopidyData(pData, i, group);
         text2.setText(pData.getSubTitle());
-        if (loadedImageData == null || ! loadedImageData.getAlbum().equals(((MopidyDataWithImage)(pData)).getAlbum())){
-            loadedImageData = null;
+        if (loadedImageStringCompare == null || ! ((MopidyDataWithImage)data).equalsImage(loadedImageStringCompare)){
+            loadedImageStringCompare = null;
             albumArt.setImageResource(R.drawable.no_album);
             task = new TaskImage(ListItemHolderImage.this, (MopidyDataWithImage) data, albumArtSize, albumArtSize);
             task.execute(albumArt.getContext());
@@ -70,6 +70,6 @@ public class ListItemHolderImage extends BaseListItem implements OnImageAndPalet
     @Override
     public void onImageAndPaletteReady(Bitmap bitmap, Palette palette, MopidyDataWithImage dataImage) {
         albumArt.setImageBitmap(bitmap);
-        loadedImageData = dataImage;
+        loadedImageStringCompare = dataImage.getImageCompareString();
     }
 }

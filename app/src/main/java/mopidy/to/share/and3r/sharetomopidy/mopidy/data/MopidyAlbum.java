@@ -7,9 +7,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 
 public class MopidyAlbum extends MopidyDataWithImage implements Serializable{
+
+    private static final String BASE_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=59a04c6a73fb99d6e8996e01db306829&artist=%s&album=%s&format=json";
+    private static final String IMAGE_DOWNLOAD_FOLER = "album";
+
 
     private String albumName;
     private MopidyArtist[] artists;
@@ -38,14 +44,49 @@ public class MopidyAlbum extends MopidyDataWithImage implements Serializable{
     }
 
     @Override
-    public String getTitle() {
+    public String[] getCheckUrls() {
+        String[] urls = new String[artists.length];
+        String safeAlbum;
+        String safeArtist;
+        for(int i=0; i< artists.length; i++){
+            try {
+                safeAlbum = URLEncoder.encode(albumName, "utf-8");
+                safeArtist = URLEncoder.encode(artists[i].getArtistName(), "utf-8");
+                urls[i] = String.format(BASE_URL, safeArtist, safeAlbum);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return urls;
+    }
+
+    @Override
+    public String getImageUrl(JSONObject object) {
+        try {
+            JSONArray array = object.getJSONObject("album").getJSONArray("image");
+            return array.getJSONObject(array.length()-1).getString("#text");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String getImageDownloadFolder() {
+        return IMAGE_DOWNLOAD_FOLER;
+    }
+
+    @Override
+    public String getImageDonwloadName() {
         return albumName;
     }
 
     @Override
-    public MopidyAlbum getAlbum() {
-        return this;
+    public String getTitle() {
+        return albumName;
     }
+
 
     public String getAlbumName() {
         return albumName;

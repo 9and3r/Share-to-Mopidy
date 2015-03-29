@@ -31,7 +31,7 @@ import mopidy.to.share.and3r.sharetomopidy.preferences.PreferencesManager;
 
 public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
 
-    private static final String BASE_URL = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=59a04c6a73fb99d6e8996e01db306829&artist=%s&album=%s&format=json";
+
 
     private MopidyDataWithImage data;
     private OnImageAndPaletteReady callback;
@@ -50,10 +50,10 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
 
     @Override
     protected Bitmap doInBackground(Context... params) {
-        File f = new File(new File(params[0].getCacheDir(),"images"), data.getAlbum().getAlbumArtFileName());
+        File f = new File(new File(params[0].getCacheDir(),data.getImageDownloadFolder()), data.getImageDonwloadName());
         boolean correctlyDownloaded = true;
         if (!f.exists()){
-            correctlyDownloaded = findUrlAndDownloadImageToStorage(params[0], f);
+            correctlyDownloaded = findUrlAndDownloadImageToStorage(f);
         }
         if (correctlyDownloaded && !isCancelled()){
             bitmap = decodeSampledBitmapFromResource(f, width, height);
@@ -68,23 +68,21 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
         }
     }
 
-    private boolean findUrlAndDownloadImageToStorage(Context c, File f){
-        MopidyArtist[] artists = data.getAlbum().getArtists();
+    private boolean findUrlAndDownloadImageToStorage(File f){
+        String[] urls = data.getCheckUrls();
         boolean found = false;
+        String url = null;
         int i = 0;
-        String url = PreferencesManager.get().getImageUrl(c, data.getAlbum().getAlbumDownloadName());
-        if (url == null){
-            while(!found && i<artists.length && !isCancelled()){
-                url = getDownloadURLWithArtist(artists[i]);
+        while(!found && i<urls.length && !isCancelled()){
+            JSONObject object = getJSONFromURL(urls[i]);
+            if (object != null){
+                url = data.getImageUrl(object);
                 if (url != null){
                     found = true;
-                    PreferencesManager.get().saveImageUrl(c, data.getAlbum().getAlbumDownloadName(), url);
-                }else{
-                    i++;
                 }
+            }else{
+                i++;
             }
-        }else{
-            found = true;
         }
         if (found && !isCancelled()){
             return downloadToStorage(url, f);
@@ -157,19 +155,6 @@ public class TaskImage extends AsyncTask<Context,Void,Bitmap> {
         }
     }
 
-    private String getDownloadURLWithArtist(MopidyArtist pArtist){
-        try {
-            String safeAlbum = URLEncoder.encode(data.getAlbum().getAlbumName(), "utf-8");
-            String safeArtist = URLEncoder.encode(pArtist.getArtistName(), "utf-8");
-            JSONObject object = getJSONFromURL(String.format(BASE_URL, safeArtist, safeAlbum));
-            JSONArray array = object.getJSONObject("album").getJSONArray("image");
-            return array.getJSONObject(array.length()-1).getString("#text");
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }catch (JSONException e){
-            return null;
-        }
-    }
 
     private JSONObject getJSONFromURL(String pUrl){
         try {

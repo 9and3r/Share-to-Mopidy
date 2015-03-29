@@ -18,8 +18,21 @@ public abstract class MopidyDataWithImage extends MopidyData implements Serializ
         super(o);
     }
 
+    public abstract String[] getCheckUrls();
 
-    public abstract MopidyAlbum getAlbum();
+    public abstract String getImageUrl(JSONObject object);
+
+    public abstract String getImageDownloadFolder();
+
+    public abstract String getImageDonwloadName();
+
+    public String getImageCompareString(){
+        return getImageDownloadFolder() + "#" + getImageDonwloadName();
+    }
+
+    public boolean equalsImage(String compare){
+        return (getImageCompareString().equals(compare));
+    }
 
     public Palette getPalette() {
         return palette;

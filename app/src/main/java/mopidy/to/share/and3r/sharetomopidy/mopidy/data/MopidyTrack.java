@@ -52,14 +52,28 @@ public class MopidyTrack extends MopidyDataWithImage implements Serializable{
     }
 
     @Override
-    public String getTitle() {
-        return getTrackString();
+    public String[] getCheckUrls() {
+        return album.getCheckUrls();
     }
 
+    @Override
+    public String getImageUrl(JSONObject object) {
+        return album.getImageUrl(object);
+    }
 
     @Override
-    public MopidyAlbum getAlbum() {
-        return album;
+    public String getImageDownloadFolder() {
+        return album.getImageDownloadFolder();
+    }
+
+    @Override
+    public String getImageDonwloadName() {
+        return album.getImageDonwloadName();
+    }
+
+    @Override
+    public String getTitle() {
+        return getTrackString();
     }
 
     public String getTrackString() {
@@ -87,4 +101,7 @@ public class MopidyTrack extends MopidyDataWithImage implements Serializable{
         return getArtistsString();
     }
 
+    public MopidyAlbum getAlbum() {
+        return album;
+    }
 }
